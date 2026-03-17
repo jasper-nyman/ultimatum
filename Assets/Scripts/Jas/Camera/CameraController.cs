@@ -1,42 +1,48 @@
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class CameraController : MonoBehaviour
 {
     // References
     [Header("References")]
     public GameObject target;
+
+    // Parameters
+    [Header("Parameters")]
     public Vector3 position;
-    public Vector3 offset;
-    Vector3 targetOffset;
-    public float trackingSpeed;
+    public Vector3 rotation;
+    public float speed;
 
     private void Update()
     {
-        if (target)
+        // Check if the target is assigned and has a transform component
+        Transform transform = target.transform;
+
+        // Update the camera's position and rotation to follow the target
+        if (target != null && transform != null)
         {
-            // Check if the target has a CameraTargetOffset script and get the offset
-            if (target.TryGetComponent(out CameraTargetOffset targetOffsetScript))
+            Vector3 offset;
+            CameraTracker tracker;
+
+            if (target.TryGetComponent<CameraTracker>(out tracker))
             {
-                targetOffset = targetOffsetScript.offset;
+                // If the target has a CameraTracker component, use its position and its offset
+                offset = tracker.position;
+                position = target.transform.position + offset;
             }
             else
             {
-                targetOffset = Vector3.zero;
+                // If the target does not have a CameraTracker component, use only its position
+                position = target.transform.position;
             }
-
-            // Update the position to the target's position
-            position = target.transform.position + offset + targetOffset;
         }
     }
 
     private void LateUpdate()
     {
-        // Track the target
-        transform.position = Vector3.Lerp
-        (
-            a: transform.position,
-            b: position,
-            t: 60 / trackingSpeed * Time.deltaTime
-        );
+        // Smoothly interpolate the camera's position and rotation towards the target position and rotation
+        transform.position = Vector3.Lerp(transform.position, position, Time.deltaTime * speed);
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(rotation), Time.deltaTime * speed);
     }
 }

@@ -5,7 +5,6 @@ public class PlayerVariables : MonoBehaviour
     // References
     [Header("References")]
     public Rigidbody rb;
-    public CameraTargetOffset cto;
 
     // Flags
     [Header("Flags")]
@@ -32,14 +31,4 @@ public class PlayerVariables : MonoBehaviour
     public float crouchHeight;
     public float crouchSpeed;
     public float jumpForce;
-
-    private void Update()
-    {
-        cto.positionOffset = new Vector3
-        (
-            x: 0,
-            y: 1.8f * transform.localScale.y,
-            z: 0
-        );
-    }
 }

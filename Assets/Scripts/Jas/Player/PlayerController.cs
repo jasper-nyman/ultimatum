@@ -3,14 +3,17 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    PlayerVariables var;
-    Rigidbody rb;
+    // References
+    private PlayerVariables var;
+    private Rigidbody rb;
 
-    Vector2 movement;
-    float moveSpeed;
+    // Parameters
+    private Vector2 movement;
+    private float moveSpeed;
 
     private void Awake()
     {
+        // Get references to the PlayerVariables component and its Rigidbody, and initialize move speed
         var = GetComponent<PlayerVariables>();
         rb = var.rb;
         moveSpeed = var.moveSpeed;
@@ -18,9 +21,10 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        // Sprinting
+        // Move speed
         if (!var.isCrouching)
         {
+            // Set move speed based on sprinting state
             if (var.isSprinting)
             {
                 moveSpeed = var.sprintSpeed;
@@ -32,6 +36,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            // Reduce move speed while crouching
             moveSpeed = var.moveSpeed / 2;
         }
 
@@ -64,7 +69,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        // Movement
+        // Calculate movement vector based on input and player orientation, and apply it to the rigidbody's velocity
         Vector3 move = (transform.right * movement.x + transform.forward * movement.y) * moveSpeed;
         rb.linearVelocity = new Vector3(move.x, rb.linearVelocity.y, move.z);
     }
@@ -73,11 +78,13 @@ public class PlayerController : MonoBehaviour
     {
         if (var.canMove)
         {
+            // Set movement vector and moving state based on input
             var.isMoving = movement != Vector2.zero;
             movement = context.ReadValue<Vector2>();
         }
         else
         {
+            // Stop movement if not allowed to move
             var.isMoving = false;
             movement = Vector2.zero;
         }
@@ -85,8 +92,10 @@ public class PlayerController : MonoBehaviour
 
     public void Sprint(InputAction.CallbackContext context)
     {
+        // Set sprinting state based on input if allowed to sprint
         if (var.canSprint)
         {
+            // Start sprinting when the input is performed, and stop sprinting when the input is canceled
             if (context.performed)
             {
                 var.isSprinting = true;
@@ -100,8 +109,10 @@ public class PlayerController : MonoBehaviour
 
     public void Crouch(InputAction.CallbackContext context)
     {
+        // Set crouching state based on input if allowed to crouch
         if (var.canCrouch)
         {
+            // Start crouching when the input is performed, and stop crouching when the input is canceled
             if (context.started)
             {
                 var.isCrouching = true;
