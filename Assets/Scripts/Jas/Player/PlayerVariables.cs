@@ -5,6 +5,8 @@ public class PlayerVariables : MonoBehaviour
     // References
     [Header("References")]
     public Rigidbody rb;
+    private CameraTracker ct;
+    public LayerMask groundLayer;
 
     // Flags
     [Header("Flags")]
@@ -20,6 +22,7 @@ public class PlayerVariables : MonoBehaviour
     // Permissions
     [Header("Permissions")]
     public bool canMove;
+    public bool canLook;
     public bool canSprint;
     public bool canCrouch;
     public bool canJump;
@@ -27,8 +30,19 @@ public class PlayerVariables : MonoBehaviour
     // Parameters
     [Header("Parameters")]
     public float moveSpeed;
+    public float lookSensitivity;
     public float sprintSpeed;
     public float crouchHeight;
     public float crouchSpeed;
     public float jumpForce;
+
+    private void Awake()
+    {
+        ct = GetComponent<CameraTracker>();
+    }
+
+    private void Update()
+    {
+        ct.positionOffset.y = 1.8f * transform.localScale.y;
+    }
 }

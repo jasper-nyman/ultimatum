@@ -13,6 +13,7 @@ public class CameraController : MonoBehaviour
     public Vector3 position;
     public Vector3 rotation;
     public float speed;
+    private float speedReal;
 
     private void Update()
     {
@@ -28,13 +29,31 @@ public class CameraController : MonoBehaviour
             if (target.TryGetComponent<CameraTracker>(out tracker))
             {
                 // If the target has a CameraTracker component, use its position and its offset
-                offset = tracker.position;
+                offset = tracker.positionOffset;
                 position = target.transform.position + offset;
+
+                // Determine the speed to use for the camera's movement based on the speedOverride value in the CameraTracker component
+                switch (tracker.speedOverride)
+                {
+                    case -1:
+                        speedReal = float.MaxValue;
+                        break;
+
+                    case 0:
+                        speedReal = speed;
+                        break;
+                }
+
+                if (tracker.speedOverride > 0)
+                {
+                    speedReal = tracker.speedOverride;
+                }
             }
             else
             {
-                // If the target does not have a CameraTracker component, use only its position
+                // If the target does not have a CameraTracker component, use the target's position without any offset
                 position = target.transform.position;
+                speedReal = speed;
             }
         }
     }
@@ -42,7 +61,13 @@ public class CameraController : MonoBehaviour
     private void LateUpdate()
     {
         // Smoothly interpolate the camera's position and rotation towards the target position and rotation
-        transform.position = Vector3.Lerp(transform.position, position, Time.deltaTime * speed);
-        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(rotation), Time.deltaTime * speed);
+        transform.position = Vector3.Lerp(transform.position, position, Time.deltaTime * speedReal);
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(rotation), Time.deltaTime * speedReal);
+
+        // If the camera is very close to the target position, snap it to the target position to prevent jittering
+        if (Vector3.Distance(transform.position, position) < 0.01f)
+        {
+            transform.position = position;
+        }
     }
 }
