@@ -1,16 +1,11 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class NewMonoBehaviourScript : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
-
     // Update is called once per frame
     void Update()
-    {
-        
+    { /*this allows the enemy to follow the player*/
+        GetComponent<NavMeshAgent>().SetDestination(GameObject.Find("Player").transform.position);
     }
 }
