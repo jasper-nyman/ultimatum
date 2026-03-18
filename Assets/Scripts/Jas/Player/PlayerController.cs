@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     private Vector2 movement;
     private float moveSpeed;
     private Vector2 look;
+    private bool crouchTriggered;
 
     private void Awake()
     {
@@ -66,7 +67,9 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        var.isGrounded = Physics.Raycast(transform.position + new Vector3(0, 0.1f, 0), Vector3.down, 0.2f, var.groundLayer);
+        var.isGrounded = Physics.OverlapBox(transform.position + new Vector3(0, 0.1f, 0), new Vector3(0.5f, 0.1f, 0.5f), Quaternion.identity, var.surfaceLayer).Length > 0;
+        float headHeight = 2 * transform.localScale.y;
+        var.isUnderObject = Physics.OverlapBox(transform.position + new Vector3(0, headHeight - 0.1f, 0), new Vector3(0.5f, 0.1f, 0.5f), Quaternion.identity, var.surfaceLayer).Length > 0;
 
         // Crouching
         if (var.isCrouching)
@@ -77,15 +80,24 @@ public class PlayerController : MonoBehaviour
                 new Vector3(1, var.crouchHeight, 1),
                 Time.deltaTime / var.crouchSpeed
             );
+
+            if (!crouchTriggered && !var.isUnderObject)
+            {
+                // Stand up if crouch input is released and not under an object
+                var.isCrouching = false;
+            }
         }
         else
         {
-            // Stand up
-            transform.localScale = Vector3.MoveTowards(
-                transform.localScale,
-                new Vector3(1, 1, 1),
-                Time.deltaTime / var.crouchSpeed
-            );
+            if (!var.isUnderObject)
+            {
+                // Stand up
+                transform.localScale = Vector3.MoveTowards(
+                    transform.localScale,
+                    new Vector3(1, 1, 1),
+                    Time.deltaTime / var.crouchSpeed
+                );
+            }
         }
 
         // Falling
@@ -103,6 +115,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             var.isFalling = false;
+            var.isJumping = false;
         }
 
         // Stand up if not allowed to crouch while not under an object
@@ -114,6 +127,11 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (var.isGrounded && !var.isJumping)
+        {
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0, rb.linearVelocity.z);
+        }
+
         // Calculate movement vector based on input and player orientation, and apply it to the rigidbody's velocity
         Vector3 move = (transform.right * movement.x + transform.forward * movement.y) * moveSpeed;
         rb.linearVelocity = new Vector3(move.x, rb.linearVelocity.y, move.z);
@@ -157,10 +175,16 @@ public class PlayerController : MonoBehaviour
             if (context.started)
             {
                 var.isCrouching = true;
+                crouchTriggered = true;
             }
             else if (context.canceled)
             {
-                var.isCrouching = false;
+                if (!var.isUnderObject)
+                {
+                    var.isCrouching = false;
+                }
+
+                crouchTriggered = false;
             }
         }
     }
@@ -170,8 +194,8 @@ public class PlayerController : MonoBehaviour
         // Apply jump force if allowed to jump and currently grounded
         if (context.started && var.canJump && var.isGrounded && !var.isCrouching)
         {
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, var.jumpForce, rb.linearVelocity.z);
             var.isJumping = true;
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, var.jumpForce, rb.linearVelocity.z);
         }
     }
 
@@ -181,7 +205,7 @@ public class PlayerController : MonoBehaviour
         if (var.canSprint)
         {
             // Start sprinting when the input is performed, and stop sprinting when the input is canceled
-            if (context.started)
+            if (context.started && var.canSprint)
             {
                 var.isSprinting = true;
             }
