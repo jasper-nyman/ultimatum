@@ -6,7 +6,7 @@ public class PlayerVariables : MonoBehaviour
     [Header("References")]
     public Rigidbody rb;
     private CameraTracker ct;
-    public LayerMask surfaceLayer;
+    public LayerMask groundLayer;
 
     // Flags
     [Header("Flags")]
