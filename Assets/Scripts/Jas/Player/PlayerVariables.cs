@@ -2,12 +2,6 @@ using UnityEngine;
 
 public class PlayerVariables : MonoBehaviour
 {
-    // References
-    [Header("References")]
-    public Rigidbody rb;
-    private CameraTracker ct;
-    public LayerMask groundLayer;
-
     // Flags
     [Header("Flags")]
     public bool isActive;
@@ -30,19 +24,9 @@ public class PlayerVariables : MonoBehaviour
     // Parameters
     [Header("Parameters")]
     public float moveSpeed;
-    public float lookSensitivity;
     public float sprintSpeed;
+    public float lookSensitivity;
     public float crouchHeight;
     public float crouchSpeed;
     public float jumpForce;
-
-    private void Awake()
-    {
-        ct = GetComponent<CameraTracker>();
-    }
-
-    private void Update()
-    {
-        ct.positionOffset.y = 1.8f * transform.localScale.y;
-    }
 }

@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(PlayerVariables))]
+
 public class PlayerController : MonoBehaviour
 {
     // References
@@ -8,65 +10,49 @@ public class PlayerController : MonoBehaviour
     private Rigidbody rb;
 
     // Parameters
-    private Vector2 movement;
-    private float moveSpeed;
+    private Vector2 move;
+    [HideInInspector] public float moveSpeed;
     private Vector2 look;
+    // UNHIDDEN FOR VISIBILITY IN INSPECTOR DURING DEBUGGING. CHECK WHY CROUCHING DOESNT HAPPEN WHEN HITTING THE GROUND AFTER QUEUING CROUCHING IN THE AIR
+    public bool crouchQueued;
 
-    private void Awake()
+    private bool GetIsCrouching()
     {
-        // Lock the cursor to the center of the screen and hide it
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        if (!var.canCrouch || !var.isGrounded)
+            return false;
 
-        // Get references to player variables and rigidbody
+        if (var.isUnderObject)
+            return true;
+
+        return crouchQueued;
+    }
+
+    private void Start()
+    {
+        // Get references
+        rb = GetComponent<Rigidbody>();
         var = GetComponent<PlayerVariables>();
-        rb = var.rb;
-
-        // Initialize move speed from player variables
+        
+        // Initialize move speed
         moveSpeed = var.moveSpeed;
     }
 
     private void Update()
     {
-        // Move speed
-        if (!var.isCrouching)
-        {
-            // Set move speed based on sprinting state
-            if (var.isSprinting)
-            {
-                moveSpeed = var.sprintSpeed;
-            }
-            else
-            {
-                moveSpeed = var.moveSpeed;
-            }
-        }
-        else
-        {
-            // Reduce move speed while crouching
-            moveSpeed = var.moveSpeed / 2;
-        }
-
         // Look
         if (var.isActive)
         {
-            // Rotate the player and camera based on look input and sensitivity
             transform.Rotate(Vector3.up * look.x * var.lookSensitivity * Time.deltaTime);
             CameraController cc = Camera.main.GetComponent<CameraController>();
+
             if (cc != null)
             {
-                // Pitch (x) is decreased by look.y to invert vertical look if desired
+                // Rotate the camera and clamp its rotation
                 cc.rotation.x -= look.y * var.lookSensitivity * Time.deltaTime;
-
-                // Clamp pitch to avoid flipping (common camera constraint)
                 cc.rotation.x = Mathf.Clamp(cc.rotation.x, -90f, 90f);
-
-                // Use Euler angles (degrees) for yaw. transform.eulerAngles.y is the correct yaw in degrees.
                 cc.rotation.y = transform.eulerAngles.y;
             }
         }
-
-        var.isGrounded = Physics.Raycast(transform.position + new Vector3(0, 0.1f, 0), Vector3.down, 0.2f, var.groundLayer);
 
         // Crouching
         if (var.isCrouching)
@@ -88,6 +74,8 @@ public class PlayerController : MonoBehaviour
             );
         }
 
+        var.isCrouching = GetIsCrouching();
+
         // Falling
         if (!var.isGrounded)
         {
@@ -104,19 +92,31 @@ public class PlayerController : MonoBehaviour
         {
             var.isFalling = false;
         }
-
-        // Stand up if not allowed to crouch while not under an object
-        if (!var.canCrouch && var.isCrouching && !var.isUnderObject)
-        {
-            var.isCrouching = false;
-        }
     }
 
     private void FixedUpdate()
     {
-        // Calculate movement vector based on input and player orientation, and apply it to the rigidbody's velocity
-        Vector3 move = (transform.right * movement.x + transform.forward * movement.y) * moveSpeed;
-        rb.linearVelocity = new Vector3(move.x, rb.linearVelocity.y, move.z);
+        // Get movement vector and apply it to the player object's rigidbody
+        Vector3 movement = (transform.right * move.x + transform.forward * move.y) * moveSpeed;
+        rb.linearVelocity = new Vector3(movement.x, rb.linearVelocity.y, movement.z);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.matrix = transform.localToWorldMatrix;
+
+        Gizmos.DrawWireCube(
+            Vector3.zero, 
+            new Vector3(1f, 0.1f, 1f)
+        );
+
+        float headHeight = 2 * transform.localScale.y;
+        Vector3 offset = new Vector3(0, headHeight, 0);
+
+        Gizmos.DrawWireCube(
+            offset, 
+            new Vector3(1f, 0.1f, 1f)
+        );
     }
 
     public void Move(InputAction.CallbackContext context)
@@ -124,14 +124,14 @@ public class PlayerController : MonoBehaviour
         if (var.canMove)
         {
             // Set movement vector and moving state based on input
-            var.isMoving = movement != Vector2.zero;
-            movement = context.ReadValue<Vector2>();
+            var.isMoving = move != Vector2.zero;
+            move = context.ReadValue<Vector2>();
         }
         else
         {
             // Stop movement if not allowed to move
             var.isMoving = false;
-            movement = Vector2.zero;
+            move = Vector2.zero;
         }
     }
 
@@ -150,17 +150,15 @@ public class PlayerController : MonoBehaviour
 
     public void Crouch(InputAction.CallbackContext context)
     {
-        // Set crouching state based on input if allowed to crouch
         if (var.canCrouch && var.isGrounded)
         {
-            // Start crouching when the input is performed, and stop crouching when the input is canceled
             if (context.started)
             {
-                var.isCrouching = true;
+                crouchQueued = true;
             }
             else if (context.canceled)
             {
-                var.isCrouching = false;
+                crouchQueued = false;
             }
         }
     }
