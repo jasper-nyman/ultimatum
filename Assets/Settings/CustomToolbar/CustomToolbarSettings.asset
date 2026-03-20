@@ -50,7 +50,7 @@ MonoBehaviour:
       isEnabled: 1
     - name: OpalStudio.CustomToolbar.Editor.ToolbarElements.ToolbarReloadScene, CustomToolbar,
         Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      isEnabled: 1
+      isEnabled: 0
     - name: OpalStudio.CustomToolbar.Editor.ToolbarElements.ToolbarLayerVisibility,
         CustomToolbar, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
       isEnabled: 0
