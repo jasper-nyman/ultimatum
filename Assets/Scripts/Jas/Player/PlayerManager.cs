@@ -1,12 +1,16 @@
 using UnityEngine;
 
+[RequireComponent(typeof(PlayerVariables))]
 public class PlayerManager : MonoBehaviour
 {
     // References
     private Rigidbody rb;
     private PlayerVariables var;
     private PlayerController ctrl;
-    private CameraTracker camTracker;
+    private CameraTracker tracker;
+
+    // Crouch queue (exposed for PlayerController to set)
+    private bool crouchQueued;
 
     void Start()
     {
@@ -14,7 +18,7 @@ public class PlayerManager : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         var = GetComponent<PlayerVariables>();
         ctrl = GetComponent<PlayerController>();
-        camTracker = GetComponent<CameraTracker>();
+        tracker = GetComponent<CameraTracker>();
 
         // Lock and hide the cursor
         Cursor.lockState = CursorLockMode.Locked;
@@ -23,45 +27,105 @@ public class PlayerManager : MonoBehaviour
 
     void Update()
     {
-        // Scale the camera tracker's height with the player object's
-        camTracker.positionOffset.y = 1.8f * transform.localScale.y;
+        // Update camera tracker height if available
+        if (tracker != null)
+            tracker.positionOffset.y = 1.8f * transform.localScale.y;
 
-        // Check if the player is grounded and/or under an object(s)
+        // Movement flag
+        if (ctrl != null)
+            var.isMoving = ctrl.move != Vector2.zero;
+
+        // Check if the player is grounded
         var.isGrounded = Physics.OverlapBox(
-            transform.position, 
-            new Vector3(0.5f, 0.1f, 0.5f), 
-            transform.rotation, 
+            transform.position,
+            new Vector3(0.5f, 0.1f, 0.5f),
+            transform.rotation,
             LayerMask.GetMask("Surface")
         ).Length > 0;
 
+        // Head (overhead) check: use approximately half-height so the check sits near the head
         float headHeight = 2 * transform.localScale.y;
         Vector3 offset = new Vector3(0, headHeight, 0);
 
         var.isUnderObject = Physics.OverlapBox(
-            transform.position + offset, 
+            transform.position + offset,
             new Vector3(0.5f, 0.1f, 0.5f),
-            transform.rotation, 
+            transform.rotation,
             LayerMask.GetMask("Surface")
         ).Length > 0;
 
-        // Update move speed based on sprinting and crouching states
-        if (!var.isCrouching)
+        // Determine crouch state using queued input, grounding and overhead
+        bool shouldCrouch = false;
+
+        if (crouchQueued)
         {
-            if (var.isSprinting)
-            {
-                // Sprinting
-                ctrl.moveSpeed = var.sprintSpeed;
-            }
-            else
-            {
-                // Walking
-                ctrl.moveSpeed = var.moveSpeed;
-            }
+            if (var.canCrouch && var.isGrounded)
+                shouldCrouch = true;
+        }
+
+        // If already crouching and an object is overhead, remain crouched
+        if (var.isCrouching && var.isUnderObject)
+            shouldCrouch = true;
+
+        var.isCrouching = shouldCrouch;
+
+        // Apply scale changes for crouching / standing
+        if (var.isCrouching)
+        {
+            transform.localScale = Vector3.MoveTowards(
+                transform.localScale,
+                new Vector3(1f, var.crouchHeight, 1f),
+                Time.deltaTime / var.crouchSpeed
+            );
         }
         else
         {
-            // Crouching
-            ctrl.moveSpeed = var.moveSpeed / 2;
+            if (!var.isUnderObject)
+            {
+                transform.localScale = Vector3.MoveTowards(
+                    transform.localScale,
+                    new Vector3(1f, 1f, 1f),
+                    Time.deltaTime / var.crouchSpeed
+                );
+            }
         }
+
+        // If crouching is disabled while crouched and no overhead, stand up
+        if (!var.canCrouch && var.isCrouching && !var.isUnderObject)
+        {
+            var.isCrouching = false;
+        }
+
+        // Falling / jumping state
+        if (!var.isGrounded)
+        {
+            if (rb != null && rb.linearVelocity.y < 0f)
+                var.isFalling = true;
+            else
+                var.isFalling = false;
+        }
+        else
+        {
+            var.isFalling = false;
+            var.isJumping = false;
+        }
+
+        // Update move speed based on sprinting and crouching states
+        if (ctrl != null)
+        {
+            if (!var.isCrouching)
+            {
+                ctrl.moveSpeed = var.isSprinting ? var.sprintSpeed : var.moveSpeed;
+            }
+            else
+            {
+                ctrl.moveSpeed = var.moveSpeed / 2f;
+            }
+        }
+    }
+    
+    public void SetCrouchQueued(bool queued)
+    {
+        crouchQueued = queued;
     }
 }
