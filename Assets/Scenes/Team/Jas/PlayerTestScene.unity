@@ -1057,32 +1057,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!1 &227468084 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1688878680452547672, guid: 929bda7756477c746ac112f921999db0, type: 3}
-  m_PrefabInstance: {fileID: 5037998136935893186}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &227468089
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 227468084}
-  m_Material: {fileID: 13400000, guid: 147bfd80a1942db41833dcb96172a7d0, type: 2}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 2, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!43 &230503472
 Mesh:
   m_ObjectHideFlags: 0
@@ -10127,10 +10101,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3340902397691569192, guid: 929bda7756477c746ac112f921999db0, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4294731937528824807, guid: 929bda7756477c746ac112f921999db0, type: 3}
       propertyPath: rb
       value: 
@@ -10207,14 +10177,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 703428231726836816, guid: 929bda7756477c746ac112f921999db0, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1688878680452547672, guid: 929bda7756477c746ac112f921999db0, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 227468089}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 929bda7756477c746ac112f921999db0, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
