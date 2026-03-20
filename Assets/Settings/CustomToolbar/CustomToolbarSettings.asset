@@ -13,6 +13,13 @@ MonoBehaviour:
   m_Name: CustomToolbarSettings
   m_EditorClassIdentifier: CustomToolbar::OpalStudio.CustomToolbar.Editor.Core.Data.ToolbarConfiguration
   groups:
+  - groupName: Version Control
+    side: 0
+    elements:
+    - name: OpalStudio.CustomToolbar.Editor.ToolbarElements.ToolbarGitStatus, CustomToolbar,
+        Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+      isEnabled: 0
+    isEnabled: 1
   - groupName: Utilities
     side: 0
     elements:
@@ -21,7 +28,7 @@ MonoBehaviour:
       isEnabled: 1
     - name: OpalStudio.CustomToolbar.Editor.ToolbarElements.ToolbarClearPlayerPrefs,
         CustomToolbar, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      isEnabled: 1
+      isEnabled: 0
     - name: OpalStudio.CustomToolbar.Editor.ToolbarElements.ToolbarSaveProject, CustomToolbar,
         Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
       isEnabled: 0
@@ -30,14 +37,14 @@ MonoBehaviour:
       isEnabled: 1
     - name: OpalStudio.CustomToolbar.Editor.ToolbarElements.SceneBookmarks.ToolbarSceneBookmarks,
         CustomToolbar, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      isEnabled: 1
+      isEnabled: 0
     isEnabled: 1
   - groupName: Scenes
     side: 0
     elements:
     - name: OpalStudio.CustomToolbar.Editor.ToolbarElements.ToolbarSceneSelection,
         CustomToolbar, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-      isEnabled: 0
+      isEnabled: 1
     - name: OpalStudio.CustomToolbar.Editor.ToolbarElements.ToolbarStartFromFirstScene,
         CustomToolbar, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
       isEnabled: 1
