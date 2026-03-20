@@ -26,9 +26,9 @@ public class ItemInstance : MonoBehaviour
         }
     }
 
-    private void Collect()
+    public void Collect()
     {
-        FindFirstObjectByType<Inventory>().items.Add(data);
+        Inventory.items.Add(data);
         Destroy(gameObject);
     }
 }

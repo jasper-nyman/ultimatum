@@ -3,5 +3,5 @@ using UnityEngine;
 
 public class Inventory : MonoBehaviour
 {
-    public List<ItemData> items;
+    public static List<ItemData> items = new();
 }
