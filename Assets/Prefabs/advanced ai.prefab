@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2577591998173982224, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
       propertyPath: m_Name
-      value: Capsule Variant
+      value: advanced ai
       objectReference: {fileID: 0}
     - target: {fileID: 4085058951993416379, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
       propertyPath: m_Height
@@ -94,6 +94,6 @@ MonoBehaviour:
   RayCastRange: 50
   obstacleMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 0
   searchingForTarget: 0
   player: {fileID: 0}

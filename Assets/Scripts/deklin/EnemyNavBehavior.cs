@@ -1,4 +1,4 @@
-using System;
+using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.ProBuilder;
@@ -8,16 +8,18 @@ public class EnemyNavBehavior : MonoBehaviour
     // The range within which the enemy can spot the target using a raycast
     public int RayCastRange = 50;
     Transform target;
-    bool targetSpotted = false;
+    bool hitwall = false;
     public LayerMask obstacleMask;
     public bool searchingForTarget = false;
     Vector3 wonderingPosition;
     public Transform player;
+    public Transform wonderTarget;
+    public NavMeshSurface surface;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // Find the player GameObject in the scene and assign it to the target variable
+       
         
        
     }
@@ -27,15 +29,14 @@ public class EnemyNavBehavior : MonoBehaviour
     {
         CanSeePlayer();
 
-        if (Vector3.Distance(transform.position, target.position) == 0)
+        if (Vector3.Distance(transform.position, target.position) < 2)
         {
-            wonderingPosition = new Vector3
-            (
-                x: UnityEngine.Random.Range(0, 60),
-                y: 0,
-                z: UnityEngine.Random.Range(0, 30)
-            );
-            GameObject.Find("wondertarget").transform.position = wonderingPosition;
+            float x = Random.Range(surface.navMeshData.sourceBounds.min.x, surface.navMeshData.sourceBounds.max.x);
+            float y = Random.Range(surface.navMeshData.sourceBounds.min.y, surface.navMeshData.sourceBounds.max.y);
+            float z = Random.Range(surface.navMeshData.sourceBounds.min.z, surface.navMeshData.sourceBounds.max.z);
+
+            wonderingPosition = new Vector3(x, y, z);
+            wonderTarget.transform.position = wonderingPosition;
 
         }
     }
@@ -43,23 +44,19 @@ public class EnemyNavBehavior : MonoBehaviour
     void CanSeePlayer()
     {
         // Check if the target is within line of sight using a raycast
-        targetSpotted = Physics.Linecast(transform.position, player.transform.position, obstacleMask);
+        hitwall = Physics.Linecast(transform.position, player.transform.position, obstacleMask);
 
         // If the target is spotted, set the destination of the NavMeshAgent to the target's position
-        if (targetSpotted)
+        if (hitwall)
         {
-            target = GameObject.Find("Player").transform;
-            GetComponent<NavMeshAgent>().SetDestination(target.transform.position);
+            target = wonderTarget.transform;
         }
         else
         {
-            target = GameObject.Find("wondertarget").transform;
+            target = player.transform;
         }
-        //if (target == null)
-        //{
-        //    wonderi = true;
-        //}
-       
+
+        GetComponent<NavMeshAgent>().SetDestination(target.transform.position);
     }
     
 }
