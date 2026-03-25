@@ -59,7 +59,15 @@ public class EnemyNavBehavior : MonoBehaviour
         // If the target is spotted, set the destination of the NavMeshAgent to the target's position
         if (hitwall)
         {
-            target = wonderTarget.transform;
+            // If the target was the player, set the wondertarget's position to the player's position
+            if (target == player)
+            {
+                wonderTarget.transform.position = player.transform.position;
+                //wonderingPosition = player.transform.position;
+            }
+            
+
+                target = wonderTarget.transform;
         }
         else
         {
