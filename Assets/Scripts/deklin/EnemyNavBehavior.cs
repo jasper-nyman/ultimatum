@@ -2,6 +2,7 @@ using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.ProBuilder;
+using UnityEngine.UIElements;
 
 public class EnemyNavBehavior : MonoBehaviour
 {
@@ -19,9 +20,7 @@ public class EnemyNavBehavior : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-       
-        
-       
+       newposition();
     }
 
     // Update is called once per frame
@@ -31,14 +30,25 @@ public class EnemyNavBehavior : MonoBehaviour
 
         if (Vector3.Distance(transform.position, target.position) < 2)
         {
-            float x = Random.Range(surface.navMeshData.sourceBounds.min.x, surface.navMeshData.sourceBounds.max.x);
-            float y = Random.Range(surface.navMeshData.sourceBounds.min.y, surface.navMeshData.sourceBounds.max.y);
-            float z = Random.Range(surface.navMeshData.sourceBounds.min.z, surface.navMeshData.sourceBounds.max.z);
-
-            wonderingPosition = new Vector3(x, y, z);
-            wonderTarget.transform.position = wonderingPosition;
-
+            newposition();
         }
+    }
+
+    void newposition()
+    {
+        float x = Random.Range(surface.navMeshData.sourceBounds.min.x, surface.navMeshData.sourceBounds.max.x);
+        float y = 3.072f;
+        float z = Random.Range(surface.navMeshData.sourceBounds.min.z, surface.navMeshData.sourceBounds.max.z);
+
+        if(NavMesh.SamplePosition(new Vector3(x, y, z), out NavMeshHit hit, 100.0f, NavMesh.AllAreas))
+        {
+            x = hit.position.x;
+            y = hit.position.y;
+            z = hit.position.z;
+        }
+
+        wonderingPosition = new Vector3(x, y, z);
+        wonderTarget.transform.position = wonderingPosition;
     }
 
     void CanSeePlayer()
