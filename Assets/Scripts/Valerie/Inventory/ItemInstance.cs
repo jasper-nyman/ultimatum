@@ -8,7 +8,7 @@ public class ItemInstance : MonoBehaviour
 
     private MeshRenderer _mesh;
 
-    private void Awake()
+    private void OnEnable()
     {
         _mesh = GetComponent<MeshRenderer>();
         _mesh.material.SetTexture("_BaseMap", data.sprite.texture);
@@ -28,7 +28,9 @@ public class ItemInstance : MonoBehaviour
 
     public void Collect()
     {
-        Inventory.items.Add(data);
+        FindFirstObjectByType<Inventory>().items.Add(data);
+        FindFirstObjectByType<Inventory>().EvaluateInventory();
+
         Destroy(gameObject);
     }
 }

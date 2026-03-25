@@ -18,6 +18,9 @@ public class InventoryItemInstance : MonoBehaviour
 
     public void Use()
     {
+        data.itemBehavior.Invoke();
 
+        FindFirstObjectByType<Inventory>().items.Remove(data);
+        FindFirstObjectByType<Inventory>().EvaluateInventory();
     }
 }
