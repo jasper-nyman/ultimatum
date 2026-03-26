@@ -681,11 +681,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
       propertyPath: m_ActionEvents.Array.data[19].m_ActionId
-      value: 652bf6da-f010-4a05-bd8f-a1c269877071
+      value: 402085d9-4d82-44e9-a9da-e62145100548
       objectReference: {fileID: 0}
     - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
       propertyPath: m_ActionEvents.Array.data[20].m_ActionId
-      value: 280fa8d0-a859-4306-89a6-44bf4930144f
+      value: 5c37629c-e84f-4cec-8f28-be8fb542364e
       objectReference: {fileID: 0}
     - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
       propertyPath: m_ActionEvents.Array.data[19].m_ActionName
