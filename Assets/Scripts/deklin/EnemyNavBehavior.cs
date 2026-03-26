@@ -63,7 +63,7 @@ public class EnemyNavBehavior : MonoBehaviour
             if (target == player)
             {
                 wonderTarget.transform.position = player.transform.position;
-                //wonderingPosition = player.transform.position;
+                //wonderTarget.navmesh direction = (wonderTarget.transform.position - transform.position).normalized;
             }
             
 
