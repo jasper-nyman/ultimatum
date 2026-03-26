@@ -33,8 +33,12 @@ public class Inventory : MonoBehaviour
 
     public void UseItem(InputAction.CallbackContext ctx)
     {
+        if (ctx.performed)
+        {
         int i = (int)Mathf.Repeat(index, Slots.Length);
         Slots[i].GetComponentInChildren<InventoryItemInstance>(false)?.Use();
+
+        }
     }
 
     private void Update()
