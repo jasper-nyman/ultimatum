@@ -284,7 +284,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -364.61935, y: 183.81775}
+  m_AnchoredPosition: {x: -384.11935, y: 171.81775}
   m_SizeDelta: {x: 222.9344, y: 17.9895}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &194001709
@@ -802,6 +802,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7013303879205339138, guid: 929bda7756477c746ac112f921999db0, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1478276033}
+    - targetCorrespondingSourceObject: {fileID: 7013303879205339138, guid: 929bda7756477c746ac112f921999db0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1478276042}
   m_SourcePrefab: {fileID: 100100000, guid: 929bda7756477c746ac112f921999db0, type: 3}
 --- !u!1001 &829983455
 PrefabInstance:
@@ -1656,6 +1659,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23cc2f0d9aaf5194fb1c87c0a5e6be33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerItemInteraction
+--- !u!114 &1478276042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1478276025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4fd0937d0de46b4dbe11d4cd1507543, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlaneShooter
+  planePrefab: {fileID: 2056438931436595903, guid: f2459cfb846e4e746af311741d469c25, type: 3}
+  originOverride: {fileID: 0}
+  itemLayers:
+    serializedVersion: 2
+    m_Bits: 1
+  raycastLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  defaultExtendSpeed: 10
+  defaultRetractSpeed: 5
+  defaultMaxDuration: 10
+  defaultMaxLength: 50
 --- !u!1001 &1541148831
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2001,7 +2028,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -363, y: 193}
+  m_AnchoredPosition: {x: -382.5, y: 181}
   m_SizeDelta: {x: 232.5856, y: 96.9448}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1776996359
@@ -2086,7 +2113,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -425.22687, y: 211.7529}
+  m_AnchoredPosition: {x: -444.72687, y: 199.7529}
   m_SizeDelta: {x: 108.1422, y: 59.4354}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1797832072
