@@ -1,11 +1,7 @@
 using UnityEngine;
 
-public class door : MonoBehaviour
+public class noise : MonoBehaviour
 {
-    public Animator anim;
-    public bool dooropen;
-    public bool doorclose;
-    public bool noise;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
