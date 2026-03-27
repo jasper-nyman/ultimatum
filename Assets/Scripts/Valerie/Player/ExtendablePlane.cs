@@ -1,4 +1,5 @@
 using System.Collections;
+using UnityEngine.Events;
 using UnityEngine;
 
 // This component controls a single extendable plane that grows outward from an origin
@@ -13,6 +14,11 @@ public class ExtendablePlane : MonoBehaviour
 
     [Tooltip("Optional visual prefab to instantiate as the plane. If null, a Cube primitive will be used.")]
     public GameObject visualPrefab;
+    [Tooltip("Optional name of a child transform inside this GameObject to use as the visual. If specified the child with this name will be used.")]
+    public string visualChildName;
+
+    [Tooltip("Optional explicit Transform to use as the visual. If set, this transform will be used instead of creating/instantiating visuals.")]
+    public Transform visualRootOverride;
 
     [Tooltip("Material to apply to the generated primitive (ignored if you provide visualPrefab).")]
     public Material overrideMaterial;
@@ -55,6 +61,12 @@ public class ExtendablePlane : MonoBehaviour
     // The visual child that will be scaled and placed — either created or instantiated from prefab.
     private Transform _visual;
 
+    // Remember original visual local scale so we can preserve X/Y when using custom prefabs.
+    private Vector3 _originalVisualScale = Vector3.one;
+
+    // Whether we created a primitive fallback visual (cube). If true we apply planeWidth/planeHeight.
+    private bool _primitiveVisual = false;
+
     // Current length of the plane along local +Z
     private float _currentLength = 0f;
 
@@ -67,7 +79,18 @@ public class ExtendablePlane : MonoBehaviour
     // Safety minimum length so we don't divide by zero or create degenerate scaling
     private const float MinLength = 0.001f;
 
+    // Event invoked when the plane has fully retracted and is about to be destroyed.
+    // Other systems (e.g., player controller) can listen to this to restore movement.
+    public UnityEvent onFinished;
+
     private void Awake()
+    {
+        // Keep Awake lightweight. We intentionally defer visual creation and positioning
+        // to Start so that spawners (which usually set the `origin` field immediately
+        // after Instantiate) have a chance to assign the origin before initialization.
+    }
+
+    private void Start()
     {
         // Ensure there's an origin set. If not, try to find a GameObject tagged "Player".
         if (origin == null)
@@ -80,7 +103,26 @@ public class ExtendablePlane : MonoBehaviour
         // Only instantiate the `visualPrefab` when there are no child visuals already present
         // on this GameObject. This avoids duplicating visuals when the plane prefab
         // already contains its visual as a child.
-        if (transform.childCount == 0)
+        // If the user assigned an explicit visualTransform, prefer that.
+        if (visualRootOverride != null)
+        {
+            _visual = visualRootOverride;
+            _visual.SetParent(transform, false);
+            var colExisting = _visual.GetComponent<Collider>();
+            if (colExisting != null) Destroy(colExisting);
+        }
+        else if (!string.IsNullOrEmpty(visualChildName))
+        {
+            var childFound = transform.Find(visualChildName);
+            if (childFound != null)
+            {
+                _visual = childFound;
+                _visual.SetParent(transform, false);
+                var colExisting = _visual.GetComponent<Collider>();
+                if (colExisting != null) Destroy(colExisting);
+            }
+        }
+        else if (transform.childCount == 0)
         {
             if (visualPrefab != null)
             {
@@ -93,6 +135,7 @@ public class ExtendablePlane : MonoBehaviour
                 var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 cube.transform.SetParent(transform, false);
                 _visual = cube.transform;
+                _primitiveVisual = true;
 
                 // Optionally apply the override material if provided
                 if (overrideMaterial != null)
@@ -108,9 +151,20 @@ public class ExtendablePlane : MonoBehaviour
         }
         else
         {
-            // Use the first child as the visual. This allows packaging a visual inside the
-            // prefab itself and prevents the script from creating a default cube on top.
-            _visual = transform.GetChild(0);
+            // Try to find a suitable visual child (prefer one that has a Renderer).
+            _visual = null;
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                var child = transform.GetChild(i);
+                if (child.GetComponent<Renderer>() != null || child.GetComponent<SpriteRenderer>() != null)
+                {
+                    _visual = child;
+                    break;
+                }
+            }
+
+            // Fall back to first child if no renderer-present child found
+            if (_visual == null) _visual = transform.GetChild(0);
 
             // Ensure the visual is parented correctly in case the prefab had different setup.
             _visual.SetParent(transform, false);
@@ -134,6 +188,9 @@ public class ExtendablePlane : MonoBehaviour
             // If origin is still null, use current transform forward.
             _worldForward = transform.forward;
         }
+
+        // Remember original scale so we can respect X/Y for custom visuals
+        if (_visual != null) _originalVisualScale = _visual.localScale;
 
         // Start with a minimal length so it appears to grow from the origin.
         _currentLength = MinLength;
@@ -209,6 +266,8 @@ public class ExtendablePlane : MonoBehaviour
             _currentLength = 0f;
             UpdateVisual();
             _state = State.Finished;
+            // Notify listeners that the plane has finished before destroying it
+            onFinished?.Invoke();
             Destroy(gameObject);
             return;
         }
@@ -227,7 +286,16 @@ public class ExtendablePlane : MonoBehaviour
         // they are built with unit length along Z as well.
 
         float l = Mathf.Max(_currentLength, MinLength);
-        _visual.localScale = new Vector3(planeWidth, planeHeight, l);
+        if (_primitiveVisual)
+        {
+            // For the cube primitive, apply the configured width/height.
+            _visual.localScale = new Vector3(planeWidth, planeHeight, l);
+        }
+        else
+        {
+            // For custom visuals, preserve X and Y scale and only set Z to the current length.
+            _visual.localScale = new Vector3(_originalVisualScale.x, _originalVisualScale.y, l);
+        }
 
         // Move the visual so its back (z=0 in local space) aligns with the transform.position (origin + offset).
         // Since scaling stretches equally around the visual's pivot (center), we translate it forward by half its length.
