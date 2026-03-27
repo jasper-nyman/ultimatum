@@ -8,10 +8,13 @@ public class PlayerInteraction : MonoBehaviour
 
     public void Interact(InputAction.CallbackContext context)
     {
-        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, interactRange, interactableLayer))
+        if (context.started)
         {
-            IInteractable interactable = hit.collider.GetComponent<IInteractable>();
-            interactable?.Interact();
+           if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, interactRange, interactableLayer))
+           {
+               IInteractable interactable = hit.collider.GetComponent<IInteractable>();
+               interactable?.Interact();
+           }
         }
     }
 }

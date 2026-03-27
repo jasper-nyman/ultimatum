@@ -1,4 +1,6 @@
+using Unity.AI.Navigation;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class door : MonoBehaviour, IInteractable
 {
@@ -12,18 +14,6 @@ public class door : MonoBehaviour, IInteractable
     public doorstate state;
     public AudioClip opennoise, closenoise;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void Interact()
     {
         if (state == doorstate.close)
@@ -34,6 +24,8 @@ public class door : MonoBehaviour, IInteractable
         {
             close();
         }
+
+        FindFirstObjectByType<NavMeshSurface>().BuildNavMesh();
     }
 
     public void open()
