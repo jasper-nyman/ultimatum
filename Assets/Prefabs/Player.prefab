@@ -127,6 +127,8 @@ GameObject:
   - component: {fileID: 8619792501530391280}
   - component: {fileID: 817072923427752072}
   - component: {fileID: 8103931299829440827}
+  - component: {fileID: 1470780684927558675}
+  - component: {fileID: 5313089770438689688}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -395,6 +397,38 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: Inventory, Assembly-CSharp
+        m_MethodName: Scroll
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 402085d9-4d82-44e9-a9da-e62145100548
+    m_ActionName: 'Player/Scroll[/Mouse/scroll/y]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: Inventory, Assembly-CSharp
+        m_MethodName: UseItem
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 5c37629c-e84f-4cec-8f28-be8fb542364e
+    m_ActionName: 'Player/Use Item[/Mouse/rightButton]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -414,3 +448,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraTracker
   positionOffset: {x: 0, y: 1.8, z: 0}
   speedOverride: -1
+--- !u!114 &1470780684927558675
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7013303879205339138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23cc2f0d9aaf5194fb1c87c0a5e6be33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerItemInteraction
+--- !u!114 &5313089770438689688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7013303879205339138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4fd0937d0de46b4dbe11d4cd1507543, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlaneShooter
+  planePrefab: {fileID: 0}
+  overrideVisualPrefab: {fileID: 0}
+  visualChildNameOverride: 
+  visualRootOverride: {fileID: 0}
+  originOverride: {fileID: 0}
+  itemLayers:
+    serializedVersion: 2
+    m_Bits: 1
+  raycastLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  defaultExtendSpeed: 10
+  defaultRetractSpeed: 5
+  defaultMaxDuration: 10
+  defaultMaxLength: 50
