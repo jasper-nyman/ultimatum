@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem; // Use the new Input System's types (Mouse, Pointer, etc.)
+using UnityEngine.Events;
 
 // This component listens for right mouse clicks and spawns an extendable plane when the
 // click is not over an in-world item. Configure the `planePrefab` in the inspector to
@@ -9,6 +10,14 @@ public class PlaneShooter : MonoBehaviour
 {
     [Tooltip("Prefab that has an ExtendablePlane component. If null, a default GameObject with ExtendablePlane will be created at runtime.")]
     public GameObject planePrefab;
+    [Tooltip("Optional visual prefab to override the ExtendablePlane's visual. If set, this will be used as the visualPrefab on spawned planes.")]
+    public GameObject overrideVisualPrefab;
+
+    [Tooltip("Optional explicit visual child name to assign to spawned planes. Useful when your plane prefab has a child named e.g. 'Visual'.")]
+    public string visualChildNameOverride;
+
+    [Tooltip("Optional explicit visual root transform to assign to spawned planes at runtime.")]
+    public Transform visualRootOverride;
 
     [Tooltip("Transform used as the origin (usually the player). If null, the GameObject tagged 'Player' will be used.")]
     public Transform originOverride;
@@ -28,6 +37,12 @@ public class PlaneShooter : MonoBehaviour
 
     private Transform _origin;
 
+    // Track how many active planes are present so we only restore movement when all are gone
+    private static int s_activePlanes = 0;
+
+    // Cached reference to player variables on origin so we can toggle movement/looking
+    private PlayerVariables _originVars;
+
     private void Awake()
     {
         // Resolve origin: use override or find object tagged "Player" in scene
@@ -40,6 +55,9 @@ public class PlaneShooter : MonoBehaviour
 
         // If still null, fall back to this component's transform
         if (_origin == null) _origin = transform;
+
+        // Cache PlayerVariables on the origin if available
+        _originVars = _origin.GetComponent<PlayerVariables>();
     }
 
     private void Update()
@@ -90,19 +108,29 @@ public class PlaneShooter : MonoBehaviour
     {
         GameObject go;
 
+        if (_origin == null)
+        {
+            // If origin isn't resolved for some reason, fallback to this transform
+            _origin = transform;
+        }
+
         if (planePrefab != null)
         {
-            // Instantiate the prefab and ensure it has an ExtendablePlane component
-            go = Instantiate(planePrefab);
+            // Instantiate the prefab at the origin position with rotation matching the origin
+            // so the visual starts already aligned and doesn't have to snap in Start.
+            var rot = Quaternion.LookRotation(_origin.TransformDirection(Vector3.forward), Vector3.up);
+            go = Instantiate(planePrefab, _origin.position + _origin.TransformDirection(Vector3.forward) * 0.5f, rot);
         }
         else
         {
             // Create an empty GameObject with ExtendablePlane component and a basic name
             go = new GameObject("ExtendablePlane_Instance");
             go.AddComponent<ExtendablePlane>();
+            // Position it at the origin so Start sets it correctly
+            go.transform.position = _origin.position + _origin.TransformDirection(Vector3.forward) * 0.5f;
         }
 
-        // Parent it to the scene root (optional) and position at the origin
+        // Parent it to the scene root (optional)
         go.transform.SetParent(null);
 
         var ep = go.GetComponent<ExtendablePlane>();
@@ -115,6 +143,30 @@ public class PlaneShooter : MonoBehaviour
 
         // Assign origin so the plane knows where to come from
         ep.origin = _origin;
+
+        // Increase active plane count and disable movement/looking on the player while the plane exists
+        s_activePlanes++;
+        if (_originVars != null)
+        {
+            _originVars.canMove = false;
+            _originVars.canLook = false;
+        }
+
+        // Subscribe to finish event so we can restore movement when this plane is done
+        ep.onFinished = ep.onFinished ?? new UnityEvent();
+        ep.onFinished.AddListener(() => {
+            s_activePlanes = Mathf.Max(0, s_activePlanes - 1);
+            if (s_activePlanes == 0 && _originVars != null)
+            {
+                _originVars.canMove = true;
+                _originVars.canLook = true;
+            }
+        });
+
+        // If shooter has override visuals specified in the inspector, pass them through
+        if (overrideVisualPrefab != null) ep.visualPrefab = overrideVisualPrefab;
+        if (!string.IsNullOrEmpty(visualChildNameOverride)) ep.visualChildName = visualChildNameOverride;
+        if (visualRootOverride != null) ep.visualRootOverride = visualRootOverride;
 
         // Apply optional default values if the prefab left them as zero/empty defaults
         if (Mathf.Approximately(ep.extendSpeed, 0f)) ep.extendSpeed = defaultExtendSpeed;
