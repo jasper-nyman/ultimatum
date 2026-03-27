@@ -411,7 +411,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_ActionId: 402085d9-4d82-44e9-a9da-e62145100548
+    m_ActionId: d0edabc3-4738-4637-8bbd-0a01118f3986
     m_ActionName: 'Player/Scroll[/Mouse/scroll/y]'
   - m_PersistentCalls:
       m_Calls:
@@ -427,8 +427,8 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_ActionId: 5c37629c-e84f-4cec-8f28-be8fb542364e
-    m_ActionName: 'Player/Use Item[/Mouse/rightButton]'
+    m_ActionId: 3c65a2e5-003a-436a-a2f5-49d2721d7043
+    m_ActionName: 'Player/UseItem[/Mouse/rightButton]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
