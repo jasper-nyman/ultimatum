@@ -1,16 +1,17 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerInteraction : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public float interactRange = 3f;
+    public LayerMask interactableLayer;
 
-    // Update is called once per frame
-    void Update()
+    public void Interact(InputAction.CallbackContext context)
     {
-        
+        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, interactRange, interactableLayer))
+        {
+            IInteractable interactable = hit.collider.GetComponent<IInteractable>();
+            interactable?.Interact();
+        }
     }
 }
