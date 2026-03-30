@@ -76,5 +76,12 @@ public class EnemyNavBehavior : MonoBehaviour
 
         GetComponent<NavMeshAgent>().SetDestination(target.transform.position);
     }
-    
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Door"))
+        {
+            other.GetComponent<door>().Interact();
+        }
+    }
 }
