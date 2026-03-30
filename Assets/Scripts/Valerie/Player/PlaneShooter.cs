@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem; // Use the new Input System's types (Mouse, Pointer, etc.)
+using UnityEngine.EventSystems;
+using System.Collections.Generic;
 using UnityEngine.Events;
 
 // This component listens for right mouse clicks and spawns an extendable plane when the
@@ -35,6 +37,9 @@ public class PlaneShooter : MonoBehaviour
     public float defaultMaxDuration = 10f;
     public float defaultMaxLength = 50f;
 
+    [Tooltip("Seconds after using an inventory item during which plane spawning is suppressed to avoid accidental shots.")]
+    public float suppressAfterItemUseSeconds = 0.25f;
+
     private Transform _origin;
 
     // Track how many active planes are present so we only restore movement when all are gone
@@ -68,6 +73,40 @@ public class PlaneShooter : MonoBehaviour
 
         if (mouse.rightButton.wasPressedThisFrame)
         {
+            var inv = FindFirstObjectByType<Inventory>();
+            if (inv != null && inv.IsSelectingItem())
+            {
+                // Player currently selecting an item -> do not spawn plane
+                return;
+            }
+
+            // If the pointer is over any UI element (including inventory items), block spawning.
+            // Use EventSystem.IsPointerOverGameObject as a robust fallback for UI hit testing.
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            {
+                return;
+            }
+
+            // Additionally guard against our specific inventory item hover tracker if available.
+            if (InventoryItemInstance.IsPointerOverAnyItem())
+            {
+                return;
+            }
+
+            // As an extra robust check, perform an EventSystem UI raycast at the mouse
+            // position and block spawning if any UI raycast result belongs to an
+            // InventoryItemInstance. This works with the new Input System as well.
+            if (IsPointerOverInventoryItem())
+            {
+                return;
+            }
+
+            // Suppress spawning for a short window after an item use (covers hotkey or UI click)
+            if (Inventory.lastItemUseTime + suppressAfterItemUseSeconds > Time.time)
+            {
+                return;
+            }
+
             var cam = Camera.main;
             if (cam == null) return;
 
@@ -102,6 +141,30 @@ public class PlaneShooter : MonoBehaviour
             // Otherwise spawn the extendable plane
             SpawnPlane();
         }
+    }
+
+    // Uses the EventSystem to raycast UI elements at the current mouse position and
+    // returns true if any of the hit UI objects contains an InventoryItemInstance.
+    private bool IsPointerOverInventoryItem()
+    {
+        if (EventSystem.current == null) return false;
+        var mouse = Mouse.current;
+        if (mouse == null) return false;
+
+        Vector2 pos = mouse.position.ReadValue();
+        PointerEventData ped = new PointerEventData(EventSystem.current) { position = pos };
+        var results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(ped, results);
+        foreach (var r in results)
+        {
+            if (r.gameObject == null) continue;
+            // If any UI Graphic or CanvasRenderer is hit, treat it as UI and block.
+            if (r.gameObject.GetComponentInParent<UnityEngine.UI.Graphic>() != null) return true;
+            if (r.gameObject.GetComponentInParent<CanvasRenderer>() != null) return true;
+            if (r.gameObject.GetComponentInParent<InventoryItemInstance>() != null) return true;
+        }
+
+        return false;
     }
 
     private void SpawnPlane()
