@@ -2555,7 +2555,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4906764505480951499, guid: 929bda7756477c746ac112f921999db0, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.49
+      value: 3.63
       objectReference: {fileID: 0}
     - target: {fileID: 4906764505480951499, guid: 929bda7756477c746ac112f921999db0, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2838,13 +2838,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityPlayModeSaver::Framework.Utils.UnityPlayModeSaverSceneUtils
   _scenePrefabInstances:
   - _gameObject: {fileID: 8788603797264527180}
-    _prefab: Assets/Prefabs/test ai.prefab
+    _prefab: Assets/Prefabs/deklin/test ai.prefab
   - _gameObject: {fileID: 1104821303}
     _prefab: Assets/Prefabs/Player.prefab
   - _gameObject: {fileID: 881828687}
     _prefab: Assets/Prefabs/Main Camera.prefab
   - _gameObject: {fileID: 1257274990}
-    _prefab: Assets/Prefabs/Cube (1).prefab
+    _prefab: Assets/Prefabs/deklin/Cube (1).prefab
 --- !u!4 &817155148
 Transform:
   m_ObjectHideFlags: 11
@@ -5525,6 +5525,27 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2863483339092207676, guid: 24146f8aaf3368a449842691c96990a1, type: 3}
   m_PrefabInstance: {fileID: 9028369097089872035}
   m_PrefabAsset: {fileID: 0}
+--- !u!65 &1257274998
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1257274990}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1274056078
 GameObject:
   m_ObjectHideFlags: 0
@@ -7234,6 +7255,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cube (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 2863483339092207676, guid: 24146f8aaf3368a449842691c96990a1, type: 3}
+      propertyPath: m_TagString
+      value: Door
+      objectReference: {fileID: 0}
     - target: {fileID: 5374489731248572150, guid: 24146f8aaf3368a449842691c96990a1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 19.995
@@ -7277,7 +7302,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2863483339092207676, guid: 24146f8aaf3368a449842691c96990a1, type: 3}
+      insertIndex: 3
+      addedObject: {fileID: 1257274998}
   m_SourcePrefab: {fileID: 100100000, guid: 24146f8aaf3368a449842691c96990a1, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

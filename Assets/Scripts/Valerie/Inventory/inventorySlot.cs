@@ -8,7 +8,14 @@ public class inventorySlot : MonoBehaviour
     // deactivated so the slot appears empty.
     public void SetItem(ItemData item)
     {
-        transform.GetChild(0).GetComponent<InventoryItemInstance>().data = item;
-        transform.GetChild(0).gameObject.SetActive(item);
+        var child = transform.GetChild(0);
+        var inst = child.GetComponent<InventoryItemInstance>();
+        if (inst != null)
+        {
+            inst.SetData(item);
+        }
+        // Activate/deactivate the visual child GameObject based on whether an item
+        // is present (non-null). Using a boolean avoids ambiguity with GameObject.SetActive overloads.
+        child.gameObject.SetActive(item != null);
     }
 }
