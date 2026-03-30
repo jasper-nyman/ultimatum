@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
@@ -22,17 +23,21 @@ public class door : MonoBehaviour, IInteractable
         if (state == doorstate.close)
         {
             open();
-         
         }
         else
         {
             close();
-            
         }
 
-        
+        Invoke(nameof(rebakeNavMesh), 1f);
     }
-    
+
+    void rebakeNavMesh()
+    {
+        FindFirstObjectByType<NavMeshSurface>().UpdateNavMesh(FindFirstObjectByType<NavMeshSurface>().navMeshData);
+        Debug.Log("rebaked navmesh");
+    }
+
     public void open()
     {
         anim.SetBool("isopen", true);
