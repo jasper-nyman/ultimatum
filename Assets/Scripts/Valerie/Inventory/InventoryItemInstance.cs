@@ -57,7 +57,17 @@ public class InventoryItemInstance : MonoBehaviour
     // from the Inventory list and tells the Inventory to refresh the UI.
     public void Use()
     {
-        data.itemBehavior.Invoke();
+        if (data == null)
+        {
+            Debug.LogWarning("InventoryItemInstance.Use called but data is null", this);
+            return;
+        }
+
+        if (data.itemBehavior != null)
+        {
+            data.itemBehavior.Invoke();
+        }
+
         // Notify other systems that an item was used (prevents immediate plane spawn)
         Inventory.NotifyItemUsed();
 
