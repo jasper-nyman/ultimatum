@@ -29,6 +29,8 @@ public class Inventory : MonoBehaviour
     // corresponding ItemData or null if there is no item for that slot.
     public void EvaluateInventory()
     {
+        if (slots == null) return;
+
         for (int i = 0; i < slots.Length; ++i)
         {
             slots[i].SetItem(i < items.Count ? items[i] : null);
@@ -62,6 +64,7 @@ public class Inventory : MonoBehaviour
     // We read a float (usually -1..1) and add it to the index scaled by ScrollSpeed.
     public void Scroll(InputAction.CallbackContext ctx)
     {
+        if (Mathf.Approximately(ScrollSpeed, 0f)) return;
         index += ctx.ReadValue<float>()/ScrollSpeed;
     }
 
@@ -70,6 +73,7 @@ public class Inventory : MonoBehaviour
     // on the InventoryItemInstance inside that slot if there is one.
     public void UseItem(InputAction.CallbackContext ctx)
     {
+        if (Slots == null || Slots.Length == 0) return;
         int i = (int)Mathf.Repeat(index, Slots.Length);
         // Try to get the InventoryItemInstance in the selected slot and call Use()
         Slots[i].GetComponentInChildren<InventoryItemInstance>(false)?.Use();
@@ -108,6 +112,7 @@ public class Inventory : MonoBehaviour
     {
         // Each frame, update the selector's position to the anchoredPosition of the
         // currently selected slot. Mathf.Repeat wraps the index so scrolling wraps.
+        if (Slots == null || Slots.Length == 0 || Selector == null) return;
         int i = (int)Mathf.Repeat(index, Slots.Length);
         Selector.anchoredPosition = Slots[i].anchoredPosition;
     }

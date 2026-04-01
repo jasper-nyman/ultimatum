@@ -3,6 +3,8 @@ using UnityEngine.InputSystem; // Use the new Input System's types (Mouse, Point
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
 using UnityEngine.Events;
+using System;
+using System.Reflection;
 
 // This component listens for right mouse clicks and spawns an extendable plane when the
 // click is not over an in-world item. Configure the `planePrefab` in the inspector to
@@ -33,9 +35,16 @@ public class PlaneShooter : MonoBehaviour
     // Optional defaults to apply to a newly-created ExtendablePlane if the plane prefab doesn't set them.
     [Header("Optional defaults applied to spawned ExtendablePlane (only used if planePrefab doesn't already set them)")]
     public float defaultExtendSpeed = 10f;
-    public float defaultRetractSpeed = 5f;
+    // Make retract much faster by default; can be tuned in the inspector on this shooter object.
+    public float defaultRetractSpeed = 80f;
     public float defaultMaxDuration = 10f;
     public float defaultMaxLength = 50f;
+
+    [Tooltip("Vertical offset (world units) applied when spawning the plane. Change this on the shooter GameObject to affect spawned planes.")]
+    public float spawnVerticalOffset = 1.5f;
+
+    [Tooltip("Optional settings asset. If set, these values will be applied to spawned planes. Use this to edit shared plane settings without modifying the prefab directly.")]
+    public UnityEngine.Object settingsAsset;
 
     [Tooltip("Seconds after using an inventory item during which plane spawning is suppressed to avoid accidental shots.")]
     public float suppressAfterItemUseSeconds = 0.25f;
@@ -65,8 +74,44 @@ public class PlaneShooter : MonoBehaviour
         _originVars = _origin.GetComponent<PlayerVariables>();
     }
 
+#if UNITY_EDITOR
+    // Ensure that if a scene instance was accidentally assigned as the `planePrefab` in
+    // the inspector, we replace it with its corresponding prefab asset (or clear it).
+    // This prevents the Editor from treating a scene object as the prefab and later
+    // duplicating or instantiating it when values change.
+    private void OnValidate()
+    {
+        if (planePrefab == null) return;
+        try
+        {
+            var src = UnityEditor.PrefabUtility.GetCorrespondingObjectFromSource(planePrefab) as GameObject;
+            if (src != null)
+            {
+                // Replace the scene instance reference with the prefab asset so
+                // we always instantiate the asset and never the scene object.
+                planePrefab = src;
+            }
+            else
+            {
+                // If the assigned object is a scene object with no prefab asset, clear it
+                // because using a scene object here leads to duplication when editing.
+                if (planePrefab.scene.IsValid())
+                {
+                    Debug.LogWarning("PlaneShooter.planePrefab referenced a scene object; clearing reference to avoid accidental duplication.", this);
+                    planePrefab = null;
+                }
+            }
+        }
+        catch { /* ignore editor lookup errors */ }
+    }
+#endif
+
     private void Update()
     {
+        // Prevent any spawning or input handling while editing in the Unity Editor.
+        // This avoids accidentally creating plane GameObjects when changing inspector
+        // values outside of Play mode.
+        if (!Application.isPlaying) return;
         // Using the new Input System to detect right mouse button presses via Mouse.current.
         var mouse = Mouse.current;
         if (mouse == null) return; // no mouse available
@@ -179,10 +224,23 @@ public class PlaneShooter : MonoBehaviour
 
         if (planePrefab != null)
         {
-            // Instantiate the prefab at the origin position with rotation matching the origin
-            // so the visual starts already aligned and doesn't have to snap in Start.
+            // Instantiate the prefab asset when possible. In the Editor a user may have
+            // dragged a scene instance into this field; prefer the corresponding asset
+            // to avoid instantiating or modifying the scene object when spawning.
+#if UNITY_EDITOR
+            GameObject prefabToInstantiate = planePrefab;
+            try
+            {
+                var source = UnityEditor.PrefabUtility.GetCorrespondingObjectFromSource(planePrefab) as GameObject;
+                if (source != null) prefabToInstantiate = source;
+            }
+            catch { /* ignore editor lookup failures */ }
+#else
+            GameObject prefabToInstantiate = planePrefab;
+#endif
             var rot = Quaternion.LookRotation(_origin.TransformDirection(Vector3.forward), Vector3.up);
-            go = Instantiate(planePrefab, _origin.position + _origin.TransformDirection(Vector3.forward) * 0.5f, rot);
+            Vector3 offset = Vector3.up * spawnVerticalOffset;
+            go = Instantiate(prefabToInstantiate, _origin.position + _origin.TransformDirection(Vector3.forward) * 0.5f + offset, rot);
         }
         else
         {
@@ -190,7 +248,8 @@ public class PlaneShooter : MonoBehaviour
             go = new GameObject("ExtendablePlane_Instance");
             go.AddComponent<ExtendablePlane>();
             // Position it at the origin so Start sets it correctly
-            go.transform.position = _origin.position + _origin.TransformDirection(Vector3.forward) * 0.5f;
+            Vector3 offset = Vector3.up * spawnVerticalOffset;
+            go.transform.position = _origin.position + _origin.TransformDirection(Vector3.forward) * 0.5f + offset;
         }
 
         // Parent it to the scene root (optional)
@@ -231,11 +290,43 @@ public class PlaneShooter : MonoBehaviour
         if (!string.IsNullOrEmpty(visualChildNameOverride)) ep.visualChildName = visualChildNameOverride;
         if (visualRootOverride != null) ep.visualRootOverride = visualRootOverride;
 
-        // Apply optional default values if the prefab left them as zero/empty defaults
-        if (Mathf.Approximately(ep.extendSpeed, 0f)) ep.extendSpeed = defaultExtendSpeed;
-        if (Mathf.Approximately(ep.retractSpeed, 0f)) ep.retractSpeed = defaultRetractSpeed;
-        if (Mathf.Approximately(ep.maxDuration, 0f)) ep.maxDuration = defaultMaxDuration;
-        if (Mathf.Approximately(ep.maxLength, 0f)) ep.maxLength = defaultMaxLength;
+        // Apply runtime-only settings to the spawned instance. Prefer values from a
+        // provided settings asset so editing shared values doesn't modify the prefab.
+        if (settingsAsset != null)
+        {
+            var so = settingsAsset as ScriptableObject;
+            if (so != null)
+            {
+                var t = so.GetType();
+                // Use reflection to read expected public fields if they exist.
+                var f = t.GetField("extendSpeed", BindingFlags.Public | BindingFlags.Instance); if (f != null) ep.extendSpeed = ConvertToFloat(f.GetValue(so));
+                f = t.GetField("retractSpeed", BindingFlags.Public | BindingFlags.Instance); if (f != null) ep.retractSpeed = ConvertToFloat(f.GetValue(so));
+                f = t.GetField("maxDuration", BindingFlags.Public | BindingFlags.Instance); if (f != null) ep.maxDuration = ConvertToFloat(f.GetValue(so));
+                f = t.GetField("maxLength", BindingFlags.Public | BindingFlags.Instance); if (f != null) ep.maxLength = ConvertToFloat(f.GetValue(so));
+                f = t.GetField("verticalSpawnOffset", BindingFlags.Public | BindingFlags.Instance); if (f != null) ep.verticalSpawnOffset = ConvertToFloat(f.GetValue(so));
+                f = t.GetField("pushSpeed", BindingFlags.Public | BindingFlags.Instance); if (f != null) ep.pushSpeed = ConvertToFloat(f.GetValue(so));
+                f = t.GetField("pushContactCheckDistance", BindingFlags.Public | BindingFlags.Instance); if (f != null) ep.pushContactCheckDistance = ConvertToFloat(f.GetValue(so));
+            }
+        }
+        else
+        {
+            // Apply shooter inspector values as runtime overrides (do not change the prefab asset).
+            ep.extendSpeed = defaultExtendSpeed;
+            ep.retractSpeed = defaultRetractSpeed;
+            ep.maxDuration = defaultMaxDuration;
+            ep.maxLength = defaultMaxLength;
+            ep.verticalSpawnOffset = spawnVerticalOffset;
+        }
+
+        // Helper to safely convert field values to float using reflection
+        float ConvertToFloat(object val)
+        {
+            if (val == null) return 0f;
+            if (val is float f) return f;
+            if (val is double d) return (float)d;
+            if (val is int i) return i;
+            try { return Convert.ToSingle(val); } catch { return 0f; }
+        }
 
         // Position and rotation will be handled by the ExtendablePlane's Awake/Update which uses ep.origin
     }
