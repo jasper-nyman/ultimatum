@@ -65,8 +65,8 @@ public class EnemyNavBehavior : MonoBehaviour
                 wonderTarget.transform.position = player.transform.position;
                 //wonderTarget.navmesh direction = (wonderTarget.transform.position - transform.position).normalized;
             }
-            
 
+            
                 target = wonderTarget.transform;
         }
         else
@@ -76,5 +76,12 @@ public class EnemyNavBehavior : MonoBehaviour
 
         GetComponent<NavMeshAgent>().SetDestination(target.transform.position);
     }
-    
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Door"))
+        {
+            other.GetComponent<door>().Interact();
+        }
+    }
 }
