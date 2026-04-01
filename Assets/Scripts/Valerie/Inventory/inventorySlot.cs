@@ -8,6 +8,7 @@ public class inventorySlot : MonoBehaviour
     // deactivated so the slot appears empty.
     public void SetItem(ItemData item)
     {
+        if (transform.childCount == 0) return;
         var child = transform.GetChild(0);
         var inst = child.GetComponent<InventoryItemInstance>();
         if (inst != null)

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Diagnostics;
 using UnityEngine.Events;
 using UnityEngine;
 
@@ -27,7 +28,13 @@ public class ExtendablePlane : MonoBehaviour
     public float extendSpeed = 10f;
 
     [Tooltip("How quickly the plane retracts (units per second).")]
-    public float retractSpeed = 5f;
+    public float retractSpeed = 12f;
+
+    [Tooltip("Linear slide speed (units/sec) applied to a pushable object while the plane pushes it.")]
+    public float pushSpeed = 5f;
+
+    [Tooltip("Small distance used to check whether the pushed object is already contacting a non-pushable obstacle.")]
+    public float pushContactCheckDistance = 0.05f;
 
     [Tooltip("How long (seconds) the plane will keep extending before forcing a retract if nothing is hit.")]
     public float maxDuration = 10f;
@@ -53,10 +60,23 @@ public class ExtendablePlane : MonoBehaviour
     [Tooltip("Optional offset from the origin along the forward direction so the plane doesn't start inside the player.")]
     public float startOffset = 0.5f;
 
+    [Tooltip("Vertical offset in world units to spawn the plane higher on the Y axis relative to the origin.")]
+    public float verticalSpawnOffset = 1.5f;
+
     // ---------------------------------------
 
     private enum State { Extending, Retracting, Finished }
     private State _state = State.Extending;
+
+    // Pushing state
+    private bool _isPushing = false;
+    private Rigidbody _pushedRb = null;
+    private Collider _pushedCollider = null;
+    private float _baseRetractSpeed = 0f;
+    // Saved original physics state for the pushed object so we can restore it when done
+    private bool _pushedOriginalKinematic = false;
+    private RigidbodyConstraints _pushedOriginalConstraints = RigidbodyConstraints.None;
+    private bool _pushedOriginalDetectCollisions = true;
 
     // The visual child that will be scaled and placed — either created or instantiated from prefab.
     private Transform _visual;
@@ -88,6 +108,30 @@ public class ExtendablePlane : MonoBehaviour
         // Keep Awake lightweight. We intentionally defer visual creation and positioning
         // to Start so that spawners (which usually set the `origin` field immediately
         // after Instantiate) have a chance to assign the origin before initialization.
+    }
+
+    // Also guard against Edit-time creation via OnEnable/OnValidate so any accidental
+    // editor instantiation is removed immediately and won't leave duplicates in the Hierarchy.
+    private void OnEnable()
+    {
+        if (!Application.isPlaying)
+        {
+            // Log a stack trace so we can identify what code is instantiating the plane in Edit mode.
+            // This helps track down editor-time duplication sources.
+            var st = new StackTrace(true);
+            UnityEngine.Debug.LogError($"ExtendablePlane created in Edit mode and will be destroyed. StackTrace:\n{st}", this);
+            DestroyImmediate(gameObject);
+        }
+    }
+
+    private void OnValidate()
+    {
+        if (!Application.isPlaying && this != null)
+        {
+            // In some editor workflows OnValidate may be called before OnEnable; ensure
+            // we also remove the instance here to be extra-safe.
+            UnityEngine.Object.DestroyImmediate(this.gameObject);
+        }
     }
 
     private void Start()
@@ -179,7 +223,7 @@ public class ExtendablePlane : MonoBehaviour
         // is instantiated elsewhere in the scene.
         if (origin != null)
         {
-            transform.position = origin.position + origin.TransformDirection(originLocalForward.normalized) * startOffset;
+            transform.position = origin.position + origin.TransformDirection(originLocalForward.normalized) * startOffset + Vector3.up * verticalSpawnOffset;
             transform.rotation = Quaternion.LookRotation(origin.TransformDirection(originLocalForward.normalized), Vector3.up);
             _worldForward = transform.forward;
         }
@@ -187,10 +231,15 @@ public class ExtendablePlane : MonoBehaviour
         {
             // If origin is still null, use current transform forward.
             _worldForward = transform.forward;
+            // Apply vertical offset even if no origin was provided so prefab preview matches runtime.
+            transform.position += Vector3.up * verticalSpawnOffset;
         }
 
         // Remember original scale so we can respect X/Y for custom visuals
         if (_visual != null) _originalVisualScale = _visual.localScale;
+
+        // Cache base retract speed so we can temporarily increase it when needed
+        _baseRetractSpeed = retractSpeed;
 
         // Start with a minimal length so it appears to grow from the origin.
         _currentLength = MinLength;
@@ -206,7 +255,7 @@ public class ExtendablePlane : MonoBehaviour
             // so the visual follows the player's orientation without delay.
             _worldForward = origin.TransformDirection(originLocalForward.normalized);
             transform.rotation = Quaternion.LookRotation(_worldForward, Vector3.up);
-            transform.position = origin.position + _worldForward * startOffset; // keep root at origin + offset
+            transform.position = origin.position + _worldForward * startOffset + Vector3.up * verticalSpawnOffset; // keep root at origin + offset and raised
         }
 
         switch (_state)
@@ -220,6 +269,41 @@ public class ExtendablePlane : MonoBehaviour
             case State.Finished:
                 // nothing left to do
                 break;
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        // Slide the pushed object by directly moving its transform for stable, non-physical motion.
+        if (_isPushing && _pushedRb != null && _state == State.Extending)
+        {
+            // If the pushed rigidbody has been destroyed, stop pushing.
+            if (_pushedRb == null)
+            {
+                StopPushingAndRetract(true);
+                return;
+            }
+
+            // Check slightly in front of the pushed object to see if it is contacting a non-pushable obstacle.
+            Vector3 checkOrigin = _pushedCollider != null ? _pushedCollider.bounds.center : _pushedRb.position;
+            if (Physics.Raycast(checkOrigin, _worldForward, out RaycastHit frontHit, pushContactCheckDistance, collisionMask, QueryTriggerInteraction.Ignore))
+            {
+                // If the thing in front is not the pushed collider and is not pushable, stop pushing and retract.
+                if (frontHit.collider != null && frontHit.collider != _pushedCollider)
+                {
+                    if (!TryGetPushableRigidbody(frontHit.collider, out var frontRb))
+                    {
+                        StopPushingAndRetract(true);
+                        return;
+                    }
+                }
+            }
+
+            // Move the pushed object's transform directly to produce a smooth sliding motion
+            // that isn't affected by standard physics jitter. This ignores collisions while
+            // moving — we rely on the front obstacle check above to stop pushing.
+            var move = _worldForward * (pushSpeed * Time.fixedDeltaTime);
+            _pushedRb.transform.position += move;
         }
     }
 
@@ -237,9 +321,19 @@ public class ExtendablePlane : MonoBehaviour
         var originPos = origin != null ? origin.position : transform.position;
         if (Physics.Raycast(originPos, _worldForward, out RaycastHit hit, _currentLength, collisionMask, QueryTriggerInteraction.Ignore))
         {
-            // We hit a wall — set the current length to the hit distance and start retracting.
-            _currentLength = Mathf.Max(hit.distance - 0.01f, MinLength); // small offset so the plane doesn't overlap the wall
-            StartRetracting();
+            // If we hit something that is pushable, begin pushing its Rigidbody instead of immediately retracting.
+            if (TryGetPushableRigidbody(hit.collider, out var hitRb))
+            {
+                // Start pushing this object. Set current length to contact point so visual looks correct.
+                _currentLength = Mathf.Max(hit.distance - 0.01f, MinLength);
+                BeginPushing(hitRb, hit.collider);
+            }
+            else
+            {
+                // Hit a non-pushable object — set length to hit and start retracting.
+                _currentLength = Mathf.Max(hit.distance - 0.01f, MinLength);
+                StartRetracting();
+            }
         }
         else if (_elapsed >= maxDuration)
         {
@@ -256,6 +350,72 @@ public class ExtendablePlane : MonoBehaviour
         _state = State.Retracting;
     }
 
+    private void BeginPushing(Rigidbody pushedRb, Collider hitCollider)
+    {
+        if (pushedRb == null) return;
+        _isPushing = true;
+        _pushedCollider = hitCollider;
+        _pushedRb = pushedRb;
+
+        // Save original physics state
+        _pushedOriginalKinematic = _pushedRb.isKinematic;
+        _pushedOriginalConstraints = _pushedRb.constraints;
+        _pushedOriginalDetectCollisions = _pushedRb.detectCollisions;
+
+        // Switch to kinematic and disable collision detection so we can slide it deterministically.
+        _pushedRb.isKinematic = true;
+        _pushedRb.detectCollisions = false;
+
+        // While pushing, allow the plane to still extend until it reaches maxLength.
+        // Also slightly increase retract speed so retract happens faster when we stop.
+        retractSpeed = _baseRetractSpeed * 2f;
+    }
+
+    private void StopPushingAndRetract(bool hitObstacle)
+    {
+        _isPushing = false;
+        // Restore pushed object's physics state if still present
+        if (_pushedRb != null)
+        {
+            _pushedRb.isKinematic = _pushedOriginalKinematic;
+            _pushedRb.constraints = _pushedOriginalConstraints;
+            _pushedRb.detectCollisions = _pushedOriginalDetectCollisions;
+        }
+        _pushedRb = null;
+        _pushedCollider = null;
+        // If we hit an obstacle, retract faster.
+        retractSpeed = _baseRetractSpeed * (hitObstacle ? 3f : 1f);
+        StartRetracting();
+    }
+
+    // Attempts to find a Rigidbody belonging to a pushable object. We avoid a compile-time
+    // dependency on a specific Pushable type by using a runtime check for a component
+    // named "Pushable" on the hit collider's GameObject or its parents.
+    private bool TryGetPushableRigidbody(Collider col, out Rigidbody rb)
+    {
+        rb = null;
+        if (col == null) return false;
+        var go = col.gameObject;
+        // Search up the parent chain for a component named "Pushable". If found, return its Rigidbody.
+        Transform t = go.transform;
+        while (t != null)
+        {
+            var comps = t.GetComponents<Component>();
+            foreach (var c in comps)
+            {
+                if (c == null) continue;
+                if (c.GetType().Name == "Pushable")
+                {
+                    rb = t.GetComponent<Rigidbody>();
+                    return rb != null;
+                }
+            }
+            t = t.parent;
+        }
+
+        return false;
+    }
+
     private void HandleRetracting()
     {
         float dt = Time.deltaTime;
@@ -267,7 +427,15 @@ public class ExtendablePlane : MonoBehaviour
             UpdateVisual();
             _state = State.Finished;
             // Notify listeners that the plane has finished before destroying it
-            onFinished?.Invoke();
+                onFinished?.Invoke();
+
+                // If we were pushing an object, restore its physics state
+                if (_isPushing && _pushedRb != null)
+                {
+                    _pushedRb.isKinematic = _pushedOriginalKinematic;
+                    _pushedRb.constraints = _pushedOriginalConstraints;
+                    _pushedRb.detectCollisions = _pushedOriginalDetectCollisions;
+                }
             Destroy(gameObject);
             return;
         }
