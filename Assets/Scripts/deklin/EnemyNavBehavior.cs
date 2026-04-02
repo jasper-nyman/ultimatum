@@ -3,14 +3,17 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.ProBuilder;
 using UnityEngine.UIElements;
+using static door;
 
 public class EnemyNavBehavior : MonoBehaviour
 {
     // The range within which the enemy can spot the target using a raycast
     public int RayCastRange = 50;
+    public float doorRange = 5f;
     Transform target;
     bool hitwall = false;
     public LayerMask obstacleMask;
+    public LayerMask doormask;
     public bool searchingForTarget = false;
     Vector3 wonderingPosition;
     public Transform player;
@@ -31,6 +34,20 @@ public class EnemyNavBehavior : MonoBehaviour
         if (Vector3.Distance(transform.position, target.position) < 2)
         {
             newposition();
+        }
+
+        Collider[] colliders = Physics.OverlapSphere(transform.position, doorRange, doormask);
+        foreach (Collider collider in colliders)
+        {
+            
+            if (collider.TryGetComponent(out door doorComponent))
+            {
+                if (doorComponent.state == doorstate.close)
+                {
+                    doorComponent.open();
+                }
+
+            }
         }
     }
 
@@ -75,13 +92,5 @@ public class EnemyNavBehavior : MonoBehaviour
         }
 
         GetComponent<NavMeshAgent>().SetDestination(target.transform.position);
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Door"))
-        {
-            other.GetComponent<door>().Interact();
-        }
     }
 }
