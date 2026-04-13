@@ -11,6 +11,14 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class ExtendablePlane : MonoBehaviour
 {
+    // Summary:
+    // ExtendablePlane visually extends along its local +Z from the provided `origin`.
+    // It performs a raycast to determine collisions and can "push" objects that
+    // are tagged with a `Pushable` component. While pushing, the object's Rigidbody
+    // is made kinematic and its transform is moved directly to produce a smooth
+    // sliding motion without physics jitter. The plane retracts when it hits a
+    // non-pushable object, when it times out, or when explicitly instructed.
+
     // -------- Editable in inspector --------
 
     [Tooltip("Optional visual prefab to instantiate as the plane. If null, a Cube primitive will be used.")]
@@ -80,6 +88,13 @@ public class ExtendablePlane : MonoBehaviour
 
     // The visual child that will be scaled and placed — either created or instantiated from prefab.
     private Transform _visual;
+
+    // Cached renderers belonging to the visual so we can hide them when the camera is too close
+    private Renderer[] _visualRenderers;
+    // A cloned visual used to show the far portion of the beam when the near portion
+    // must be hidden to avoid occluding the camera. This keeps the beam visible.
+    private Transform _farVisual;
+    private Renderer[] _farVisualRenderers;
 
     // Remember original visual local scale so we can preserve X/Y when using custom prefabs.
     private Vector3 _originalVisualScale = Vector3.one;
@@ -223,7 +238,22 @@ public class ExtendablePlane : MonoBehaviour
         // is instantiated elsewhere in the scene.
         if (origin != null)
         {
-            transform.position = origin.position + origin.TransformDirection(originLocalForward.normalized) * startOffset + Vector3.up * verticalSpawnOffset;
+            // Ensure the plane root is placed at or beyond startOffset relative to the origin.
+            // If the player's camera is closer than startOffset, push the plane start forward
+            // so it does not sit between the camera and the scene (which would occlude view).
+            float effectiveStart = startOffset;
+            try
+            {
+                var cam = Camera.main;
+                if (cam != null)
+                {
+                    float camLocalZ = origin.InverseTransformPoint(cam.transform.position).z;
+                    // leave a small margin so plane starts slightly in front of camera
+                    effectiveStart = Mathf.Max(startOffset, camLocalZ + 0.15f);
+                }
+            }
+            catch { }
+            transform.position = origin.position + origin.TransformDirection(originLocalForward.normalized) * effectiveStart + Vector3.up * verticalSpawnOffset;
             transform.rotation = Quaternion.LookRotation(origin.TransformDirection(originLocalForward.normalized), Vector3.up);
             _worldForward = transform.forward;
         }
@@ -237,6 +267,25 @@ public class ExtendablePlane : MonoBehaviour
 
         // Remember original scale so we can respect X/Y for custom visuals
         if (_visual != null) _originalVisualScale = _visual.localScale;
+
+        // Cache renderers for hide/show logic
+        if (_visual != null)
+        {
+            _visualRenderers = _visual.GetComponentsInChildren<Renderer>(true);
+            // Create a far visual clone so we can hide/thin the near portion without
+            // removing the visible beam further out. Clone only once.
+            try
+            {
+                var cloneGo = Instantiate(_visual.gameObject, transform);
+                cloneGo.name = _visual.name + "_Far";
+                _farVisual = cloneGo.transform;
+                _farVisual.SetParent(transform, false);
+                // Remove any collider on the clone as well
+                var colc = _farVisual.GetComponent<Collider>(); if (colc != null) Destroy(colc);
+                _farVisualRenderers = _farVisual.GetComponentsInChildren<Renderer>(true);
+            }
+            catch { /* non-fatal if clone fails for complex visuals */ }
+        }
 
         // Cache base retract speed so we can temporarily increase it when needed
         _baseRetractSpeed = retractSpeed;
@@ -255,7 +304,14 @@ public class ExtendablePlane : MonoBehaviour
             // so the visual follows the player's orientation without delay.
             _worldForward = origin.TransformDirection(originLocalForward.normalized);
             transform.rotation = Quaternion.LookRotation(_worldForward, Vector3.up);
-            transform.position = origin.position + _worldForward * startOffset + Vector3.up * verticalSpawnOffset; // keep root at origin + offset and raised
+            // Compute an effective start so the plane doesn't start between the camera and the world
+            float effectiveStart = startOffset;
+            if (Camera.main != null)
+            {
+                float camLocalZ = origin.InverseTransformPoint(Camera.main.transform.position).z;
+                effectiveStart = Mathf.Max(startOffset, camLocalZ + 0.15f);
+            }
+            transform.position = origin.position + _worldForward * effectiveStart + Vector3.up * verticalSpawnOffset; // keep root at origin + offset and raised
         }
 
         switch (_state)
@@ -269,6 +325,26 @@ public class ExtendablePlane : MonoBehaviour
             case State.Finished:
                 // nothing left to do
                 break;
+        }
+
+        // If we have a visual and a camera, hide the visual only when the camera is actually
+        // inside the visual's world bounds. This is more accurate than clamping by startOffset
+        // and avoids hiding the entire plane when the camera is slightly forward but still
+        // should be able to see the beam shooting out.
+        if (_visual != null && _visualRenderers != null && Camera.main != null && _visualRenderers.Length > 0)
+        {
+            var camPos = Camera.main.transform.position;
+
+            // Hide only the renderer(s) whose bounds actually contain the camera position.
+            // This prevents hiding the entire beam when a single part intersects the camera.
+            for (int i = 0; i < _visualRenderers.Length; i++)
+            {
+                var r = _visualRenderers[i];
+                if (r == null) continue;
+                bool contains = r.bounds.Contains(camPos);
+                if (r.enabled == contains)
+                    r.enabled = !contains;
+            }
         }
     }
 
@@ -454,19 +530,74 @@ public class ExtendablePlane : MonoBehaviour
         // they are built with unit length along Z as well.
 
         float l = Mathf.Max(_currentLength, MinLength);
+        // If the camera is very close to the origin, reduce the visual's thickness so it
+        // doesn't occlude the first-person view. We keep the Z length intact so the beam
+        // remains visible but is very thin from the player's perspective.
+        float thicknessFactor = 1f;
+        // If the camera is actually inside the visual bounds, thin the beam but keep it visible.
+        if (Camera.main != null && _visualRenderers != null && _visualRenderers.Length > 0)
+        {
+            var camPos = Camera.main.transform.position;
+            Bounds combined = _visualRenderers[0].bounds;
+            for (int i = 1; i < _visualRenderers.Length; i++)
+            {
+                if (_visualRenderers[i] == null) continue;
+                combined.Encapsulate(_visualRenderers[i].bounds);
+            }
+            if (combined.Contains(camPos))
+            {
+                // Use a larger thickness than before so the beam remains visible in first-person.
+                thicknessFactor = 0.25f;
+            }
+        }
+
+        // If we have a cloned far-visual, split the beam into a near segment (which may be thinned/hidden)
+        // and a far segment so the player can still see the beam while the near geometry won't occlude.
+        float nearLen = 0f;
+        float farLen = l;
+        if (Camera.main != null && origin != null && _farVisual != null)
+        {
+            // Camera local Z relative to origin
+            float camLocalZ = origin.InverseTransformPoint(Camera.main.transform.position).z;
+            // We want to hide the portion of the beam that is in front of the camera. Compute nearLen as
+            // how much of the beam is between origin and the camera (minus a small margin).
+            float margin = 0.05f;
+            nearLen = Mathf.Clamp(camLocalZ - margin, 0f, l);
+            farLen = Mathf.Max(0f, l - nearLen);
+        }
+
+        // Update near visual (original)
         if (_primitiveVisual)
         {
-            // For the cube primitive, apply the configured width/height.
-            _visual.localScale = new Vector3(planeWidth, planeHeight, l);
+            _visual.localScale = new Vector3(planeWidth * thicknessFactor, planeHeight * thicknessFactor, Mathf.Max(nearLen, MinLength));
         }
         else
         {
-            // For custom visuals, preserve X and Y scale and only set Z to the current length.
-            _visual.localScale = new Vector3(_originalVisualScale.x, _originalVisualScale.y, l);
+            _visual.localScale = new Vector3(_originalVisualScale.x * thicknessFactor, _originalVisualScale.y * thicknessFactor, Mathf.Max(nearLen, MinLength));
         }
+        _visual.localPosition = new Vector3(0f, 0f, Mathf.Max(nearLen, MinLength) * 0.5f);
 
-        // Move the visual so its back (z=0 in local space) aligns with the transform.position (origin + offset).
-        // Since scaling stretches equally around the visual's pivot (center), we translate it forward by half its length.
-        _visual.localPosition = new Vector3(0f, 0f, l * 0.5f);
+        // Update far visual (clone) to show the remainder of the beam beyond the near segment
+        if (_farVisual != null)
+        {
+            if (farLen <= MinLength)
+            {
+                _farVisual.gameObject.SetActive(false);
+            }
+            else
+            {
+                _farVisual.gameObject.SetActive(true);
+                if (_primitiveVisual)
+                {
+                    _farVisual.localScale = new Vector3(planeWidth, planeHeight, farLen);
+                }
+                else
+                {
+                    _farVisual.localScale = new Vector3(_originalVisualScale.x, _originalVisualScale.y, farLen);
+                }
+                // Position far visual so its start aligns immediately after the near segment
+                _farVisual.localPosition = new Vector3(0f, 0f, nearLen + (farLen * 0.5f));
+            }
+        }
     }
 }

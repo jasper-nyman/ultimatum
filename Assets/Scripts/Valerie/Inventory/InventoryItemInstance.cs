@@ -9,6 +9,12 @@ using UnityEngine.EventSystems;
 public class InventoryItemInstance : MonoBehaviour
     , IPointerEnterHandler, IPointerExitHandler
 {
+    // Summary:
+    // This component lives on the visual child inside each inventory slot. It
+    // displays an `ItemData` sprite, handles pointer enter/exit events (so the
+    // shooter can detect when the user is hovering UI), and exposes `Use()` to
+    // trigger the configured `itemBehavior` on the assigned `ItemData`.
+
     // The ItemData that this UI instance displays and will use when activated.
     public ItemData data;
 

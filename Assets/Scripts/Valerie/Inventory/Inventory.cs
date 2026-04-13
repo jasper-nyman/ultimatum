@@ -1,12 +1,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+// using Valerie.Player;
 
 // Inventory component: holds a list of collected ItemData and manages the UI slots
 // This component is responsible for tracking what items the player has and
 // updating the on-screen UI (slots + selector) accordingly.
 public class Inventory : MonoBehaviour
 {
+    // Summary:
+    // The Inventory component stores a list of ItemData instances the player has
+    // collected. It manages UI slot components (`inventorySlot`) and a selector
+    // rect transform to indicate the currently selected slot. Input actions call
+    // `Scroll` to move the selector and `UseItem` to activate the selected item.
+
     // The list of ItemData objects the player currently has collected.
     // This is the canonical inventory content data.
     public List<ItemData> items = new();
@@ -48,6 +55,10 @@ public class Inventory : MonoBehaviour
         lastItemUseTime = Time.time;
     }
 
+    // When true, input-related methods such as Scroll and UseItem should ignore input.
+    // PlaneShooter sets this while a plane is active so inventory cannot be changed.
+    public bool inputLocked = false;
+
     // Cached array of inventorySlot components (children of this GameObject).
     // We use these to update individual UI slots in EvaluateInventory.
     private inventorySlot[] slots;
@@ -65,6 +76,7 @@ public class Inventory : MonoBehaviour
     public void Scroll(InputAction.CallbackContext ctx)
     {
         if (Mathf.Approximately(ScrollSpeed, 0f)) return;
+        if (inputLocked) return;
         index += ctx.ReadValue<float>()/ScrollSpeed;
     }
 
@@ -73,6 +85,7 @@ public class Inventory : MonoBehaviour
     // on the InventoryItemInstance inside that slot if there is one.
     public void UseItem(InputAction.CallbackContext ctx)
     {
+        if (inputLocked) return;
         if (Slots == null || Slots.Length == 0) return;
         int i = (int)Mathf.Repeat(index, Slots.Length);
         // Try to get the InventoryItemInstance in the selected slot and call Use()
