@@ -12,6 +12,14 @@ using System.Reflection;
 [DisallowMultipleComponent]
 public class PlaneShooter : MonoBehaviour
 {
+    // Summary:
+    // The PlaneShooter is responsible for detecting player input (right-click) and
+    // creating an `ExtendablePlane` instance that extends from the player's origin.
+    // It contains several editor-facing fields that control runtime behavior of the
+    // spawned plane (extend/retract speeds, spawn height, etc.). The shooter will
+    // not spawn planes while the editor is not in Play mode to avoid accidental
+    // duplication when editing inspector values.
+
     [Tooltip("Prefab that has an ExtendablePlane component. If null, a default GameObject with ExtendablePlane will be created at runtime.")]
     public GameObject planePrefab;
     [Tooltip("Optional visual prefab to override the ExtendablePlane's visual. If set, this will be used as the visualPrefab on spawned planes.")]
@@ -43,6 +51,12 @@ public class PlaneShooter : MonoBehaviour
     [Tooltip("Vertical offset (world units) applied when spawning the plane. Change this on the shooter GameObject to affect spawned planes.")]
     public float spawnVerticalOffset = 1.5f;
 
+    [Header("Camera override when shooting")]
+    [Tooltip("Local forward offset (meters) for the camera while the plane is active. Small positive moves camera slightly forward relative to player head so the shot stays first-person.")]
+    public float cameraForwardOffset = 0.2f;
+    [Tooltip("Vertical offset for the temporary camera position.")]
+    public float cameraHeight = 1.5f;
+
     [Tooltip("Optional settings asset. If set, these values will be applied to spawned planes. Use this to edit shared plane settings without modifying the prefab directly.")]
     public UnityEngine.Object settingsAsset;
 
@@ -56,6 +70,15 @@ public class PlaneShooter : MonoBehaviour
 
     // Cached reference to player variables on origin so we can toggle movement/looking
     private PlayerVariables _originVars;
+
+    // Save camera state while plane is active so we can restore it when done
+    private Transform _savedCamParent;
+    private Vector3 _savedCamLocalPos;
+    private Quaternion _savedCamLocalRot;
+    private GameObject _savedCamTarget;
+    private bool _savedCamControllerEnabled = false;
+    private float _savedCamNearClip = -1f;
+    private bool _firstPlaneSetupDone = false;
 
     private void Awake()
     {
@@ -118,72 +141,28 @@ public class PlaneShooter : MonoBehaviour
 
         if (mouse.rightButton.wasPressedThisFrame)
         {
+            Debug.Log("PlaneShooter: right mouse pressed — attempting spawn check");
             var inv = FindFirstObjectByType<Inventory>();
             if (inv != null && inv.IsSelectingItem())
             {
                 // Player currently selecting an item -> do not spawn plane
                 return;
             }
-
-            // If the pointer is over any UI element (including inventory items), block spawning.
-            // Use EventSystem.IsPointerOverGameObject as a robust fallback for UI hit testing.
-            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
-            {
-                return;
-            }
-
-            // Additionally guard against our specific inventory item hover tracker if available.
-            if (InventoryItemInstance.IsPointerOverAnyItem())
-            {
-                return;
-            }
-
-            // As an extra robust check, perform an EventSystem UI raycast at the mouse
-            // position and block spawning if any UI raycast result belongs to an
-            // InventoryItemInstance. This works with the new Input System as well.
-            if (IsPointerOverInventoryItem())
-            {
-                return;
-            }
-
-            // Suppress spawning for a short window after an item use (covers hotkey or UI click)
+            // We intentionally DO NOT block on pointer-over-UI here: the player should
+            // be able to fire the plane regardless of where the camera or pointer is aimed.
+            // We still keep the brief suppression after using an item to avoid accidental
+            // double-activations when using an item and immediately right-clicking.
             if (Inventory.lastItemUseTime + suppressAfterItemUseSeconds > Time.time)
             {
                 return;
             }
 
-            var cam = Camera.main;
-            if (cam == null) return;
+            // We intentionally DO NOT perform a world raycast here. The plane should
+            // spawn regardless of camera orientation or what the cursor is over so
+            // long as the player is allowed to shoot (inventory not selecting an item
+            // and pointer not over UI). This lets the player fire the plane even if
+            // they're looking away from the firing direction.
 
-            // Raycast from the camera through the mouse position
-            Vector2 mousePos = mouse.position.ReadValue();
-            Ray ray = cam.ScreenPointToRay(mousePos);
-
-            // Do physics raycast using the configured raycast layers
-            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, raycastLayers, QueryTriggerInteraction.Ignore))
-            {
-                // If the hit object is on the itemLayers then do nothing
-                if (((1 << hit.transform.gameObject.layer) & itemLayers) != 0)
-                {
-                    // Click was on an item layer — skip spawning
-                    return;
-                }
-
-                // Also check if the hit object (or its parents) contains an ItemInstance component
-                // We avoid a compile-time dependency by searching components and matching by type name.
-                var comps = hit.transform.GetComponentsInParent<Component>();
-                foreach (var c in comps)
-                {
-                    if (c == null) continue;
-                    if (c.GetType().Name == "ItemInstance")
-                    {
-                        // Clicked an in-world item — skip
-                        return;
-                    }
-                }
-            }
-
-            // Otherwise spawn the extendable plane
             SpawnPlane();
         }
     }
@@ -266,22 +245,110 @@ public class PlaneShooter : MonoBehaviour
         // Assign origin so the plane knows where to come from
         ep.origin = _origin;
 
-        // Increase active plane count and disable movement/looking on the player while the plane exists
+        // Increase active plane count and disable movement/looking/jump on all PlayerVariables so
+        // the player cannot move/look/jump while the plane is active.
         s_activePlanes++;
-        if (_originVars != null)
+        var pvs = FindObjectsOfType<PlayerVariables>();
+        foreach (var pv in pvs)
         {
-            _originVars.canMove = false;
-            _originVars.canLook = false;
+            pv.canMove = false;
+            pv.canLook = false;
+            pv.canJump = false;
+        }
+
+        // Lock inventory inputs across all Inventory instances
+        var invs = FindObjectsOfType<Inventory>();
+        foreach (var ii in invs)
+        {
+            ii.inputLocked = true;
+        }
+
+        // If this is the first plane spawned, perform one-time camera repositioning so
+        // the shot is visible. We avoid repeating this for multiple concurrent planes.
+        if (!_firstPlaneSetupDone)
+        {
+            var cam = Camera.main ?? FindObjectOfType<Camera>();
+            if (cam != null)
+            {
+                _savedCamParent = cam.transform.parent;
+                _savedCamLocalPos = cam.transform.localPosition;
+                _savedCamLocalRot = cam.transform.localRotation;
+                _savedCamTarget = null;
+                var cc = cam.GetComponent<CameraController>();
+                if (cc != null)
+                {
+                    _savedCamControllerEnabled = cc.enabled;
+                    cc.enabled = false;
+                    _savedCamTarget = cc.target;
+                }
+
+                // Save and temporarily reduce near clip plane to avoid z-fighting when camera is very close
+                _savedCamNearClip = cam.nearClipPlane;
+                try { cam.nearClipPlane = 0.01f; } catch { }
+
+                // Keep camera in first-person while making the shot visible: parent it to the origin
+                // and apply a small local forward and vertical offset. This avoids switching to a
+                // third-person view by unparenting the camera from the player.
+                cam.transform.SetParent(_origin, true);
+                // Ensure the camera isn't placed inside the plane's visual (causes z-fighting / flicker).
+                // Prefer the configured forward offset but clamp it to be behind the plane's startOffset
+                // so the camera stays in front of the player but not intersecting the spawned plane.
+                float safeLocalZ = cameraForwardOffset;
+                if (ep != null)
+                {
+                    // leave a small margin so the camera is definitely behind the visual start
+                    float margin = 0.05f;
+                    safeLocalZ = Mathf.Min(cameraForwardOffset, ep.startOffset - margin);
+                }
+                // Prevent extreme negative values; default to configured offset if clamping produced an invalid value
+                if (float.IsNaN(safeLocalZ) || safeLocalZ < -1f) safeLocalZ = cameraForwardOffset;
+                cam.transform.localPosition = new Vector3(0f, cameraHeight, safeLocalZ);
+                cam.transform.localRotation = Quaternion.identity;
+            }
+            _firstPlaneSetupDone = true;
         }
 
         // Subscribe to finish event so we can restore movement when this plane is done
         ep.onFinished = ep.onFinished ?? new UnityEvent();
         ep.onFinished.AddListener(() => {
             s_activePlanes = Mathf.Max(0, s_activePlanes - 1);
-            if (s_activePlanes == 0 && _originVars != null)
+            if (s_activePlanes == 0)
             {
-                _originVars.canMove = true;
-                _originVars.canLook = true;
+                // Restore all PlayerVariables
+                var pvs2 = FindObjectsOfType<PlayerVariables>();
+                foreach (var pv2 in pvs2)
+                {
+                    pv2.canMove = true;
+                    pv2.canLook = true;
+                    pv2.canJump = true;
+                }
+
+                // Unlock inventory input across all inventories
+                var invs2 = FindObjectsOfType<Inventory>();
+                foreach (var ii2 in invs2)
+                {
+                    ii2.inputLocked = false;
+                }
+
+                // Restore camera parent/transform
+                var cam2 = Camera.main;
+                if (cam2 != null)
+                {
+                    var cc2 = cam2.GetComponent<CameraController>();
+                    if (cc2 != null)
+                    {
+                        cc2.target = _savedCamTarget;
+                        cc2.enabled = _savedCamControllerEnabled;
+                    }
+                    // Restore saved near clip plane
+                    try { if (_savedCamNearClip > 0f) cam2.nearClipPlane = _savedCamNearClip; } catch { }
+                    cam2.transform.SetParent(_savedCamParent, true);
+                    cam2.transform.localPosition = _savedCamLocalPos;
+                    cam2.transform.localRotation = _savedCamLocalRot;
+                }
+
+                // Reset first-plane flag so next spawn will reposition camera again
+                _firstPlaneSetupDone = false;
             }
         });
 
