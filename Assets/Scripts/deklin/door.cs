@@ -29,7 +29,7 @@ public class door : MonoBehaviour, IInteractable
             close();
         }
 
-        Invoke(nameof(rebakeNavMesh), 1f);
+        
     }
 
     void rebakeNavMesh()
@@ -43,6 +43,7 @@ public class door : MonoBehaviour, IInteractable
         anim.SetBool("isopen", true);
         state = doorstate.open;
         GetComponent<AudioSource>().PlayOneShot(openNoise);
+        Invoke(nameof(rebakeNavMesh), 1f);
     }
 
     public void close()
@@ -50,5 +51,6 @@ public class door : MonoBehaviour, IInteractable
         anim.SetBool("isopen", false);
         state = doorstate.close;
         GetComponent<AudioSource>().PlayOneShot(closeNoise);
+        Invoke(nameof(rebakeNavMesh), 1f);
     }
 }
