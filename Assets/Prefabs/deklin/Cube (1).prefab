@@ -31,8 +31,8 @@ Transform:
   m_GameObject: {fileID: 2863483339092207676}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.70710707, z: -0, w: 0.7071066}
-  m_LocalPosition: {x: 19.995, y: 4.0413, z: 1.78}
-  m_LocalScale: {x: 0.5476, y: 3.9229858, z: 3.0588713}
+  m_LocalPosition: {x: 20, y: 4, z: 1.78}
+  m_LocalScale: {x: 0.55, y: 4, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -109,8 +109,8 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
@@ -129,8 +129,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::door
   anim: {fileID: 7879714653518722842}
   state: 1
-  opennoise: {fileID: 8300000, guid: 01f53f4ac111dd2408450d21176462cc, type: 3}
-  closenoise: {fileID: 8300000, guid: 4305ffd25900227499d0167c9f1b8f7b, type: 3}
+  openNoise: {fileID: 0}
+  closeNoise: {fileID: 0}
 --- !u!95 &7879714653518722842
 Animator:
   serializedVersion: 7

@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 571238017930529691}
   - component: {fileID: 6056380797605738837}
   - component: {fileID: 4451799945818210822}
-  - component: {fileID: 5497941696138175770}
+  - component: {fileID: 4304306861239770595}
   m_Layer: 7
   m_Name: Cube (2)
   m_TagString: Door
@@ -273,7 +273,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &5497941696138175770
+--- !u!114 &4304306861239770595
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -282,10 +282,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 2819720698749541673}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 777f41f5d1f5f2b4b81c0dfb9e2b5ee1, type: 3}
+  m_Script: {fileID: 11500000, guid: 802e6952761dc2343a1773e9d950a963, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::noise
-  noiserange: 30
+  m_EditorClassIdentifier: Assembly-CSharp::worldnoise
 --- !u!1 &8569530099534031052
 GameObject:
   m_ObjectHideFlags: 0
@@ -295,7 +294,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1446209590120363227}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: door
   m_TagString: Door
   m_Icon: {fileID: 0}
@@ -311,7 +310,7 @@ Transform:
   m_GameObject: {fileID: 8569530099534031052}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 44.995003, y: 4.0413, z: 1.7800208}
+  m_LocalPosition: {x: 45, y: 4, z: 1.78}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
