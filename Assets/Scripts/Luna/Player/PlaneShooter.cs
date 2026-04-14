@@ -71,14 +71,9 @@ public class PlaneShooter : MonoBehaviour
     // Cached reference to player variables on origin so we can toggle movement/looking
     private PlayerVariables _originVars;
 
-    // Save camera state while plane is active so we can restore it when done
-    private Transform _savedCamParent;
-    private Vector3 _savedCamLocalPos;
-    private Quaternion _savedCamLocalRot;
-    private GameObject _savedCamTarget;
-    private bool _savedCamControllerEnabled = false;
-    private float _savedCamNearClip = -1f;
-    private bool _firstPlaneSetupDone = false;
+    // Note: we intentionally do not modify camera transforms when firing the plane.
+    // The shooter only disables player movement/looking/jump and locks inventory while
+    // the plane is active so the player remains in first-person view unchanged.
 
     private void Awake()
     {
@@ -263,50 +258,9 @@ public class PlaneShooter : MonoBehaviour
             ii.inputLocked = true;
         }
 
-        // If this is the first plane spawned, perform one-time camera repositioning so
-        // the shot is visible. We avoid repeating this for multiple concurrent planes.
-        if (!_firstPlaneSetupDone)
-        {
-            var cam = Camera.main ?? FindObjectOfType<Camera>();
-            if (cam != null)
-            {
-                _savedCamParent = cam.transform.parent;
-                _savedCamLocalPos = cam.transform.localPosition;
-                _savedCamLocalRot = cam.transform.localRotation;
-                _savedCamTarget = null;
-                var cc = cam.GetComponent<CameraController>();
-                if (cc != null)
-                {
-                    _savedCamControllerEnabled = cc.enabled;
-                    cc.enabled = false;
-                    _savedCamTarget = cc.target;
-                }
-
-                // Save and temporarily reduce near clip plane to avoid z-fighting when camera is very close
-                _savedCamNearClip = cam.nearClipPlane;
-                try { cam.nearClipPlane = 0.01f; } catch { }
-
-                // Keep camera in first-person while making the shot visible: parent it to the origin
-                // and apply a small local forward and vertical offset. This avoids switching to a
-                // third-person view by unparenting the camera from the player.
-                cam.transform.SetParent(_origin, true);
-                // Ensure the camera isn't placed inside the plane's visual (causes z-fighting / flicker).
-                // Prefer the configured forward offset but clamp it to be behind the plane's startOffset
-                // so the camera stays in front of the player but not intersecting the spawned plane.
-                float safeLocalZ = cameraForwardOffset;
-                if (ep != null)
-                {
-                    // leave a small margin so the camera is definitely behind the visual start
-                    float margin = 0.05f;
-                    safeLocalZ = Mathf.Min(cameraForwardOffset, ep.startOffset - margin);
-                }
-                // Prevent extreme negative values; default to configured offset if clamping produced an invalid value
-                if (float.IsNaN(safeLocalZ) || safeLocalZ < -1f) safeLocalZ = cameraForwardOffset;
-                cam.transform.localPosition = new Vector3(0f, cameraHeight, safeLocalZ);
-                cam.transform.localRotation = Quaternion.identity;
-            }
-            _firstPlaneSetupDone = true;
-        }
+        // Intentionally do not modify camera transforms when firing the plane. The shooter
+        // only disables player movement/looking/jump and locks inventory while the plane
+        // is active so the player remains in first-person view unchanged.
 
         // Subscribe to finish event so we can restore movement when this plane is done
         ep.onFinished = ep.onFinished ?? new UnityEvent();
@@ -330,25 +284,7 @@ public class PlaneShooter : MonoBehaviour
                     ii2.inputLocked = false;
                 }
 
-                // Restore camera parent/transform
-                var cam2 = Camera.main;
-                if (cam2 != null)
-                {
-                    var cc2 = cam2.GetComponent<CameraController>();
-                    if (cc2 != null)
-                    {
-                        cc2.target = _savedCamTarget;
-                        cc2.enabled = _savedCamControllerEnabled;
-                    }
-                    // Restore saved near clip plane
-                    try { if (_savedCamNearClip > 0f) cam2.nearClipPlane = _savedCamNearClip; } catch { }
-                    cam2.transform.SetParent(_savedCamParent, true);
-                    cam2.transform.localPosition = _savedCamLocalPos;
-                    cam2.transform.localRotation = _savedCamLocalRot;
-                }
-
-                // Reset first-plane flag so next spawn will reposition camera again
-                _firstPlaneSetupDone = false;
+                // Nothing to restore for camera — we did not modify it.
             }
         });
 
@@ -384,6 +320,10 @@ public class PlaneShooter : MonoBehaviour
             ep.maxLength = defaultMaxLength;
             ep.verticalSpawnOffset = spawnVerticalOffset;
         }
+
+        // Speed modifiers: make the plane extend 1.5x faster and retract 2.25x faster when spawned.
+        ep.extendSpeed = ep.extendSpeed * 1.5f;
+        ep.retractSpeed = ep.retractSpeed * 2.25f;
 
         // Helper to safely convert field values to float using reflection
         float ConvertToFloat(object val)
