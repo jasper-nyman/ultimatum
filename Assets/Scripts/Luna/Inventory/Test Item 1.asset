@@ -14,3 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   sprite: {fileID: 21300000, guid: 8abd40aa6a62b9848950c12efc731841, type: 3}
   description: 
+  itemBehavior:
+    m_PersistentCalls:
+      m_Calls: []
+  model: {fileID: 404061130229404162, guid: de98f1c4b09c9934b8ec40eb7ba2783c, type: 3}

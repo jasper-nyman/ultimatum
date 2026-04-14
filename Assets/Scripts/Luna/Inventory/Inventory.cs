@@ -8,6 +8,18 @@ using UnityEngine.InputSystem;
 // updating the on-screen UI (slots + selector) accordingly.
 public class Inventory : MonoBehaviour
 {
+    public static Inventory Instance { get; private set; }
+
+    public static ItemData CurrentSelected
+    {
+        get
+        {
+            int i = (int)Mathf.Repeat(Instance.index, Instance.Slots.Length);
+            // Try to get the InventoryItemInstance in the selected slot and call Use()
+            return Instance.Slots[i].GetComponentInChildren<InventoryItemInstance>(false).data;
+        }
+    }
+
     // Summary:
     // The Inventory component stores a list of ItemData instances the player has
     // collected. It manages UI slot components (`inventorySlot`) and a selector
@@ -68,6 +80,7 @@ public class Inventory : MonoBehaviour
         // Gather all inventorySlot components in children (including inactive ones)
         // so EvaluateInventory can update them even if some are currently disabled.
         slots = GetComponentsInChildren<inventorySlot>(true);
+        Instance = this;
     }
 
     // Called by the Input System when the scroll action is used. The project
