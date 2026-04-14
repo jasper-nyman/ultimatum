@@ -127,9 +127,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ExtendablePlane
   visualPrefab: {fileID: 0}
+  visualChildName: 
+  visualRootOverride: {fileID: 0}
   overrideMaterial: {fileID: 0}
   extendSpeed: 10
   retractSpeed: 5
+  pushSpeed: 5
+  pushContactCheckDistance: 0.05
   maxDuration: 10
   maxLength: 50
   planeWidth: 0.2
@@ -140,3 +144,7 @@ MonoBehaviour:
   origin: {fileID: 0}
   originLocalForward: {x: 0, y: 0, z: 1}
   startOffset: 0.5
+  verticalSpawnOffset: 0.5
+  onFinished:
+    m_PersistentCalls:
+      m_Calls: []

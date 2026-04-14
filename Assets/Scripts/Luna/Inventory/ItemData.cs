@@ -17,4 +17,6 @@ public class ItemData : ScriptableObject
     // You can hook functions in the inspector to make items cause effects without
     // writing custom code for each item.
     public UnityEvent itemBehavior;
+
+    public GameObject model;
 }
