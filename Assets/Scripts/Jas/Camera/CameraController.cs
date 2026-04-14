@@ -15,6 +15,11 @@ public class CameraController : MonoBehaviour
     public float speed;
     private float speedReal;
 
+    private void Start()
+    {
+        QualitySettings.vSyncCount = 1;
+    }
+
     private void Update()
     {
         // Check if the target is assigned and has a transform component
