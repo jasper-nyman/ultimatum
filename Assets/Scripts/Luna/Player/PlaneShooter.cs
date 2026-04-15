@@ -137,12 +137,9 @@ public class PlaneShooter : MonoBehaviour
         if (mouse.rightButton.wasPressedThisFrame)
         {
             Debug.Log("PlaneShooter: right mouse pressed — attempting spawn check");
-            var inv = FindFirstObjectByType<Inventory>();
-            if (inv != null && inv.IsSelectingItem())
-            {
-                // Player currently selecting an item -> do not spawn plane
-                return;
-            }
+            // Previously we blocked spawning if the player was selecting an inventory item.
+            // Now we allow spawning and, when an inventory item is selected, use its model
+            // as the visual for the spawned plane (see logic in SpawnPlane).
             // We intentionally DO NOT block on pointer-over-UI here: the player should
             // be able to fire the plane regardless of where the camera or pointer is aimed.
             // We still keep the brief suppression after using an item to avoid accidental
@@ -235,6 +232,32 @@ public class PlaneShooter : MonoBehaviour
             Debug.LogError("Spawned plane prefab does not contain an ExtendablePlane component.");
             Destroy(go);
             return;
+        }
+
+        // If the player currently has an inventory item selected and that item
+        // provides a world `model` prefab, use that model as the visual for the
+        // spawned plane. We instantiate the item's model as a child of the
+        // spawned plane and assign it to `visualRootOverride` so the
+        // ExtendablePlane will prefer it instead of the plane prefab's visual.
+        var inv = Inventory.Instance;
+        if (inv != null && inv.IsSelectingItem())
+        {
+            var selected = Inventory.CurrentSelected;
+            if (selected != null && selected.model != null)
+            {
+                try
+                {
+                    var itemVisual = Instantiate(selected.model, go.transform);
+                    itemVisual.transform.localPosition = Vector3.zero;
+                    itemVisual.transform.localRotation = Quaternion.identity;
+                    // Assign the instantiated model as the visual override before Start runs
+                    ep.visualRootOverride = itemVisual.transform;
+                }
+                catch (Exception ex)
+                {
+                    Debug.LogWarning($"PlaneShooter: failed to instantiate selected item model: {ex.Message}");
+                }
+            }
         }
 
         // Assign origin so the plane knows where to come from

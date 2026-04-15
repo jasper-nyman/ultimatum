@@ -499,3 +499,8 @@ MonoBehaviour:
   defaultRetractSpeed: 5
   defaultMaxDuration: 10
   defaultMaxLength: 50
+  spawnVerticalOffset: 1.5
+  cameraForwardOffset: 0.2
+  cameraHeight: 1.5
+  settingsAsset: {fileID: 0}
+  suppressAfterItemUseSeconds: 0.25
