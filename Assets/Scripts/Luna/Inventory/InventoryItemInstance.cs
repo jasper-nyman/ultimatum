@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 // This component represents an item inside an inventory UI slot. It holds a reference
 // to the ItemData and is responsible for showing the sprite and performing the
@@ -61,8 +62,11 @@ public class InventoryItemInstance : MonoBehaviour
     // This invokes the UnityEvent `itemBehavior` defined on the ItemData (this can
     // be configured in the inspector to trigger effects), then removes the item
     // from the Inventory list and tells the Inventory to refresh the UI.
-    public void Use()
+    public void Use(InputAction.CallbackContext ctx)
     {
+        if (!ctx.started)
+            return;
+
         if (data == null)
         {
             Debug.LogWarning("InventoryItemInstance.Use called but data is null", this);
@@ -74,14 +78,14 @@ public class InventoryItemInstance : MonoBehaviour
             data.itemBehavior.Invoke();
         }
 
-        // Notify other systems that an item was used (prevents immediate plane spawn)
-        Inventory.NotifyItemUsed();
-
-        var inv = FindFirstObjectByType<Inventory>();
-        if (inv != null)
+        if (data.isConsumable)
         {
-            inv.items.Remove(data);
-            inv.EvaluateInventory();
+            var inv = FindFirstObjectByType<Inventory>();
+            if (inv != null)
+            {
+                inv.items.Remove(data);
+                inv.EvaluateInventory();
+            }
         }
     }
 }

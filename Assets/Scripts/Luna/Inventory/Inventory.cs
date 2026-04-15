@@ -102,7 +102,7 @@ public class Inventory : MonoBehaviour
         if (Slots == null || Slots.Length == 0) return;
         int i = (int)Mathf.Repeat(index, Slots.Length);
         // Try to get the InventoryItemInstance in the selected slot and call Use()
-        Slots[i].GetComponentInChildren<InventoryItemInstance>(false)?.Use();
+        Slots[i].GetComponentInChildren<InventoryItemInstance>(false)?.Use(ctx);
     }
 
     // Returns true if the selector currently points to a slot that contains an item.

@@ -10,11 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 64a1b67d822a49244bf8905a3359e66f, type: 3}
-  m_Name: Test Item 1
+  m_Name: 2-hour energy boost
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  sprite: {fileID: 21300000, guid: 8abd40aa6a62b9848950c12efc731841, type: 3}
+  sprite: {fileID: 21300000, guid: 4484c9866e574374d87bc95bd8c48695, type: 3}
   description: 
+  isConsumable: 1
   itemBehavior:
     m_PersistentCalls:
       m_Calls: []
-  model: {fileID: 404061130229404162, guid: de98f1c4b09c9934b8ec40eb7ba2783c, type: 3}
+  model: {fileID: 0}

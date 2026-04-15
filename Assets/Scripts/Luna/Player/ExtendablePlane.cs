@@ -111,6 +111,13 @@ public class ExtendablePlane : MonoBehaviour
     // Cached forward direction in world space
     private Vector3 _worldForward = Vector3.forward;
 
+    // The world-space origin position and forward captured at spawn time so the plane
+    // extends along a fixed direction and does not follow the player while extending.
+    private Vector3 _spawnOriginPosition;
+    private Vector3 _spawnRootPosition;
+    private Vector3 _spawnWorldForward;
+    private bool _lockedToSpawn = false;
+
     // Safety minimum length so we don't divide by zero or create degenerate scaling
     private const float MinLength = 0.001f;
 
@@ -392,6 +399,15 @@ public class ExtendablePlane : MonoBehaviour
         // Increase length
         _currentLength += extendSpeed * dt;
         if (_currentLength > maxLength) _currentLength = maxLength;
+
+        // If we've reached maximum length without hitting anything, start retracting immediately
+        // instead of waiting for the maxDuration timeout.
+        if (_currentLength >= maxLength)
+        {
+            StartRetracting();
+            UpdateVisual();
+            return;
+        }
 
         // Raycast from origin (not from visual center) to check if we've hit something within the current length.
         var originPos = origin != null ? origin.position : transform.position;
