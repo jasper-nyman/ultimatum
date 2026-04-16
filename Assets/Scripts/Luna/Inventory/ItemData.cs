@@ -13,10 +13,17 @@ public class ItemData : ScriptableObject
     // Optional description text visible in the inspector (TextArea provides a larger field).
     [TextArea] public string description;
 
+    public bool isConsumable;
+
     // UnityEvent that defines the behavior that happens when the item is used.
     // You can hook functions in the inspector to make items cause effects without
     // writing custom code for each item.
     public UnityEvent itemBehavior;
 
     public GameObject model;
+
+    public void Punch()
+    {
+        FindFirstObjectByType<PlaneShooter>().SpawnPlane();
+    }
 }

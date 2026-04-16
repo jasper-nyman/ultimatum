@@ -124,41 +124,6 @@ public class PlaneShooter : MonoBehaviour
     }
 #endif
 
-    private void Update()
-    {
-        // Prevent any spawning or input handling while editing in the Unity Editor.
-        // This avoids accidentally creating plane GameObjects when changing inspector
-        // values outside of Play mode.
-        if (!Application.isPlaying) return;
-        // Using the new Input System to detect right mouse button presses via Mouse.current.
-        var mouse = Mouse.current;
-        if (mouse == null) return; // no mouse available
-
-        if (mouse.rightButton.wasPressedThisFrame)
-        {
-            Debug.Log("PlaneShooter: right mouse pressed — attempting spawn check");
-            // Previously we blocked spawning if the player was selecting an inventory item.
-            // Now we allow spawning and, when an inventory item is selected, use its model
-            // as the visual for the spawned plane (see logic in SpawnPlane).
-            // We intentionally DO NOT block on pointer-over-UI here: the player should
-            // be able to fire the plane regardless of where the camera or pointer is aimed.
-            // We still keep the brief suppression after using an item to avoid accidental
-            // double-activations when using an item and immediately right-clicking.
-            if (Inventory.lastItemUseTime + suppressAfterItemUseSeconds > Time.time)
-            {
-                return;
-            }
-
-            // We intentionally DO NOT perform a world raycast here. The plane should
-            // spawn regardless of camera orientation or what the cursor is over so
-            // long as the player is allowed to shoot (inventory not selecting an item
-            // and pointer not over UI). This lets the player fire the plane even if
-            // they're looking away from the firing direction.
-
-            SpawnPlane();
-        }
-    }
-
     // Uses the EventSystem to raycast UI elements at the current mouse position and
     // returns true if any of the hit UI objects contains an InventoryItemInstance.
     private bool IsPointerOverInventoryItem()
@@ -183,7 +148,7 @@ public class PlaneShooter : MonoBehaviour
         return false;
     }
 
-    private void SpawnPlane()
+    public void SpawnPlane()
     {
         GameObject go;
 
@@ -263,14 +228,13 @@ public class PlaneShooter : MonoBehaviour
         // Assign origin so the plane knows where to come from
         ep.origin = _origin;
 
-        // Increase active plane count and disable movement/looking/jump on all PlayerVariables so
-        // the player cannot move/look/jump while the plane is active.
+        // Increase active plane count and disable jump on all PlayerVariables so
+        // the player cannot jump while the plane is active. Movement and looking are
+        // intentionally left enabled so the player can move while the plane extends.
         s_activePlanes++;
         var pvs = FindObjectsOfType<PlayerVariables>();
         foreach (var pv in pvs)
         {
-            pv.canMove = false;
-            pv.canLook = false;
             pv.canJump = false;
         }
 
@@ -291,12 +255,11 @@ public class PlaneShooter : MonoBehaviour
             s_activePlanes = Mathf.Max(0, s_activePlanes - 1);
             if (s_activePlanes == 0)
             {
-                // Restore all PlayerVariables
+                // Restore jump permission on all PlayerVariables. We do not modify
+                // movement or looking here (we didn't disable them when spawning).
                 var pvs2 = FindObjectsOfType<PlayerVariables>();
                 foreach (var pv2 in pvs2)
                 {
-                    pv2.canMove = true;
-                    pv2.canLook = true;
                     pv2.canJump = true;
                 }
 
@@ -344,9 +307,12 @@ public class PlaneShooter : MonoBehaviour
             ep.verticalSpawnOffset = spawnVerticalOffset;
         }
 
-        // Speed modifiers: make the plane extend 1.5x faster and retract 2.25x faster when spawned.
+        // Speed modifiers: make the plane extend 1.5x faster. Set retract so it is
+        // 2.25x the actual extend speed (retract = extend * 2.25).
         ep.extendSpeed = ep.extendSpeed * 1.5f;
-        ep.retractSpeed = ep.retractSpeed * 2.25f;
+        ep.retractSpeed = ep.extendSpeed * 2.25f;
+        // Shorten max duration so the plane times out sooner when it hits nothing.
+        ep.maxDuration = ep.maxDuration * 0.5f;
 
         // Helper to safely convert field values to float using reflection
         float ConvertToFloat(object val)
