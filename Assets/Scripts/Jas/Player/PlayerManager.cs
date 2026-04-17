@@ -122,6 +122,25 @@ public class PlayerManager : MonoBehaviour
                 ctrl.moveSpeed = var.moveSpeed / 2f;
             }
         }
+
+        if (var.isSprinting)
+        {
+            // Drain stamina while sprinting
+            var.stamina -= var.staminaDrainRate * Time.deltaTime;
+            if (var.stamina <= 0f)
+            {
+                var.stamina = 0f;
+                var.isSprinting = false; // stop sprinting when stamina runs out
+            }
+        }
+        else if (!var.isMoving)
+        {
+            // Regenerate stamina when not sprinting
+            if (var.stamina < 100f)
+            {
+                var.stamina += var.staminaRegenRate * Time.deltaTime;
+            }
+        }
     }
     
     public void SetCrouchQueued(bool queued)

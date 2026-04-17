@@ -25,6 +25,9 @@ public class PlayerVariables : MonoBehaviour
     [Header("Parameters")]
     public float moveSpeed;
     public float sprintSpeed;
+    public float stamina;
+    public float staminaDrainRate;
+    public float staminaRegenRate;
     public float lookSensitivity;
     public float crouchHeight;
     public float crouchSpeed;

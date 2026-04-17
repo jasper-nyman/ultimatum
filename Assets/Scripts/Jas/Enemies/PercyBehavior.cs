@@ -8,6 +8,7 @@ public class PercyBehavior : MonoBehaviour
     private GameObject player;
     private Transform playerTransform;
     private PlayerVariables pvar;
+    private Rigidbody prb;
     private bool caughtPlayer;
 
     private AudioSource aSource;
@@ -20,6 +21,7 @@ public class PercyBehavior : MonoBehaviour
         player = GameObject.Find("Player");
         playerTransform = player.transform;
         pvar = player.GetComponent<PlayerVariables>();
+        prb = player.GetComponent<Rigidbody>();
         aSource = GetComponent<AudioSource>();
     }
 
@@ -32,6 +34,9 @@ public class PercyBehavior : MonoBehaviour
             pvar.canMove = false;
             pvar.canLook = false;
             pvar.canCrouch = false;
+            pvar.canJump = false;
+            prb.linearVelocity = Vector3.zero; // Stop player movement
+            prb.useGravity = false;
             caughtPlayer = true;
             aSource.PlayOneShot(jumpscareSound); // Play the jumpscare sound
             Invoke(nameof(Lose), 1f); // Delay the lose condition to allow the player to see Percy
@@ -43,6 +48,17 @@ public class PercyBehavior : MonoBehaviour
     {
         if (caughtPlayer)
         {
+            pvar.isActive = false; // Disable player movement and look
+            pvar.canMove = false;
+            pvar.canLook = false;
+            pvar.canCrouch = false;
+            pvar.canJump = false;
+            prb.linearVelocity = Vector3.zero; // Stop player movement
+            prb.constraints = RigidbodyConstraints.FreezeAll; // Freeze player position and rotation
+            float xnew = player.transform.position.x;
+            float ynew = transform.position.y;
+            float znew = player.transform.position.z;
+            player.transform.position = new Vector3(xnew, ynew - 1, znew);
             CameraController cc = Camera.main.GetComponent<CameraController>();
             // force camera to look at Percy
             cc.rotation = Quaternion.LookRotation((transform.position + new Vector3(0, 0.9f, 0)) - Camera.main.transform.position).eulerAngles;

@@ -5523,6 +5523,8 @@ MonoBehaviour:
     _prefab: Assets/Prefabs/deklin/door.prefab
   - _gameObject: {fileID: 964181406}
     _prefab: Assets/Prefabs/deklin/door.prefab
+  - _gameObject: {fileID: 1579246457}
+    _prefab: Assets/Prefabs/deklin/Particle System Variant.prefab
 --- !u!4 &817155148
 Transform:
   m_ObjectHideFlags: 11
@@ -10073,6 +10075,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8569530099534031052, guid: c34ba526e01d43c4ca5b8629b2a1e621, type: 3}
   m_PrefabInstance: {fileID: 1941327322}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1579246457 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4202478941474315704, guid: d848e60132a2735438f25d7af0ecd379, type: 3}
+  m_PrefabInstance: {fileID: 1310252889801604935}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1609392529
 GameObject:
   m_ObjectHideFlags: 0
@@ -11483,6 +11490,63 @@ Mesh:
       - serializedVersion: 1
         m_IndexStart: 0
         m_IndexCount: 0
+--- !u!1001 &1310252889801604935
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3114954667220421130, guid: d848e60132a2735438f25d7af0ecd379, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 14.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3114954667220421130, guid: d848e60132a2735438f25d7af0ecd379, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 9.56
+      objectReference: {fileID: 0}
+    - target: {fileID: 3114954667220421130, guid: d848e60132a2735438f25d7af0ecd379, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -6.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3114954667220421130, guid: d848e60132a2735438f25d7af0ecd379, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071069
+      objectReference: {fileID: 0}
+    - target: {fileID: 3114954667220421130, guid: d848e60132a2735438f25d7af0ecd379, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.70710677
+      objectReference: {fileID: 0}
+    - target: {fileID: 3114954667220421130, guid: d848e60132a2735438f25d7af0ecd379, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.0000000029056633
+      objectReference: {fileID: 0}
+    - target: {fileID: 3114954667220421130, guid: d848e60132a2735438f25d7af0ecd379, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.000000014901165
+      objectReference: {fileID: 0}
+    - target: {fileID: 3114954667220421130, guid: d848e60132a2735438f25d7af0ecd379, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 3114954667220421130, guid: d848e60132a2735438f25d7af0ecd379, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3114954667220421130, guid: d848e60132a2735438f25d7af0ecd379, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4202478941474315704, guid: d848e60132a2735438f25d7af0ecd379, type: 3}
+      propertyPath: m_Name
+      value: Particle System
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d848e60132a2735438f25d7af0ecd379, type: 3}
 --- !u!1001 &1552750888759463474
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11726,3 +11790,4 @@ SceneRoots:
   - {fileID: 1263699913}
   - {fileID: 1808877185}
   - {fileID: 832213039}
+  - {fileID: 1310252889801604935}

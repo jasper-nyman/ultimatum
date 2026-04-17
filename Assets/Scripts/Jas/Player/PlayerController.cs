@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
     // Input callback invoked by the Input System for movement (Vector2)
     public void Move(InputAction.CallbackContext context)
     {
-        if (var.canMove)
+        if (var.isActive && var.canMove)
         {
             // When movement is allowed, read the input vector and store it for FixedUpdate
             move = context.ReadValue<Vector2>();
@@ -120,7 +120,7 @@ public class PlayerController : MonoBehaviour
     {
         if (var.canSprint)
         {
-            if (context.started)
+            if (context.started && var.stamina > 0f)
             {
                 var.isSprinting = true;
             }
