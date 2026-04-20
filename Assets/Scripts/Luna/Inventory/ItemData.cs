@@ -22,6 +22,9 @@ public class ItemData : ScriptableObject
 
     public GameObject model;
 
+    [Tooltip("If true, using this item will restore the player's stamina to full.")]
+    public bool restoreFullStaminaOnUse = false;
+
     public void Punch()
     {
         FindFirstObjectByType<PlaneShooter>().SpawnPlane();
