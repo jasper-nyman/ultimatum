@@ -78,6 +78,16 @@ public class InventoryItemInstance : MonoBehaviour
             data.itemBehavior.Invoke();
         }
 
+        // If this item is configured to restore stamina, apply it to the player's PlayerStamina component
+        if (data.restoreFullStaminaOnUse)
+        {
+            var ps = FindFirstObjectByType<PlayerStamina>();
+            if (ps != null)
+            {
+                ps.RestoreFull();
+            }
+        }
+
         if (data.isConsumable)
         {
             var inv = FindFirstObjectByType<Inventory>();

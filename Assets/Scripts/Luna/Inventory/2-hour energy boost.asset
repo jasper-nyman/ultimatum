@@ -19,3 +19,4 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   model: {fileID: 0}
+  restoreFullStaminaOnUse: 1
