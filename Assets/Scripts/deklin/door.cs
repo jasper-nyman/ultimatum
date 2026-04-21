@@ -44,6 +44,8 @@ public class door : MonoBehaviour, IInteractable
         state = doorstate.open;
         GetComponent<AudioSource>().PlayOneShot(openNoise);
         Invoke(nameof(rebakeNavMesh), 1f);
+
+        cat.opendoor = transform;
     }
 
     public void close()
