@@ -81,10 +81,30 @@ public class InventoryItemInstance : MonoBehaviour
         // If this item is configured to restore stamina, apply it to the player's PlayerStamina component
         if (data.restoreFullStaminaOnUse)
         {
-            var ps = FindFirstObjectByType<PlayerStamina>();
+            // Try several ways to obtain the PlayerStamina instance. If none exists, attach one to the Player object.
+            PlayerStamina ps = null;
+            try { ps = FindFirstObjectByType<PlayerStamina>(); } catch { ps = null; }
+            if (ps == null)
+            {
+                var player = GameObject.FindWithTag("Player");
+                if (player != null)
+                {
+                    ps = player.GetComponent<PlayerStamina>();
+                    if (ps == null)
+                    {
+                        // Add the component so stamina can be tracked/restored
+                        ps = player.AddComponent<PlayerStamina>();
+                    }
+                }
+            }
+
             if (ps != null)
             {
                 ps.RestoreFull();
+            }
+            else
+            {
+                Debug.LogWarning("No PlayerStamina found and no Player GameObject tagged 'Player' to add it to. Stamina not restored.", this);
             }
         }
 

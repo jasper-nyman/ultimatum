@@ -14,9 +14,24 @@ public class Inventory : MonoBehaviour
     {
         get
         {
-            int i = (int)Mathf.Repeat(Instance.index, Instance.Slots.Length);
-            // Try to get the InventoryItemInstance in the selected slot and call Use()
-            return Instance.Slots[i].GetComponentInChildren<InventoryItemInstance>(false).data;
+            if (Instance == null) return null;
+            int len = 0;
+            if (Instance.Slots != null && Instance.Slots.Length > 0) len = Instance.Slots.Length;
+            else if (Instance.slots != null && Instance.slots.Length > 0) len = Instance.slots.Length;
+            if (len == 0) return null;
+            int i = (int)Mathf.Repeat(Instance.index, len);
+            InventoryItemInstance inst = null;
+            if (Instance.Slots != null && Instance.Slots.Length > 0)
+            {
+                var rt = Instance.Slots[i];
+                if (rt != null) inst = rt.GetComponentInChildren<InventoryItemInstance>(false);
+            }
+            else if (Instance.slots != null && Instance.slots.Length > 0)
+            {
+                var s = Instance.slots[i];
+                if (s != null) inst = s.GetComponentInChildren<InventoryItemInstance>(false);
+            }
+            return inst != null ? inst.data : null;
         }
     }
 
@@ -136,11 +151,62 @@ public class Inventory : MonoBehaviour
 
     private void Update()
     {
-        // Each frame, update the selector's position to the anchoredPosition of the
-        // currently selected slot. Mathf.Repeat wraps the index so scrolling wraps.
-        if (Slots == null || Slots.Length == 0 || Selector == null) return;
-        int i = (int)Mathf.Repeat(index, Slots.Length);
-        Selector.anchoredPosition = Slots[i].anchoredPosition;
+        // Each frame, update the selector's position to match the currently selected slot.
+        // Support two workflows: user assigned a public `Slots` array in the inspector or
+        // relying on the automatic `inventorySlot` children cached in `slots`.
+        if (Selector == null) return;
+
+        int len = 0;
+        bool usePublic = (Slots != null && Slots.Length > 0);
+        if (usePublic) len = Slots.Length;
+        else if (slots != null && slots.Length > 0) len = slots.Length;
+        if (len == 0) return;
+
+        int i = (int)Mathf.Repeat(index, len);
+
+        RectTransform targetRt = null;
+        if (usePublic)
+        {
+            targetRt = Slots[i];
+        }
+        else
+        {
+            var s = slots[i];
+            if (s != null) targetRt = s.GetComponent<RectTransform>();
+        }
+
+        if (targetRt == null) return;
+
+        // If the selector and target share the same parent RectTransform, we can directly
+        // copy the anchoredPosition which is resolution-agnostic when using a Canvas with
+        // a Screen Space or Scale With Screen Size Canvas Scaler.
+        var parentRt = Selector.parent as RectTransform;
+        if (parentRt == null)
+        {
+            Selector.position = targetRt.position;
+            return;
+        }
+
+        if (targetRt.parent == parentRt)
+        {
+            // Directly match anchoredPosition when possible — avoids camera/screen conversions
+            Selector.anchoredPosition = targetRt.anchoredPosition;
+            return;
+        }
+
+        // Otherwise convert the target's world position into the selector's parent local space
+        // taking into account the Canvas render mode and camera.
+        var canvas = targetRt.GetComponentInParent<Canvas>();
+        Camera cam = null;
+        if (canvas != null && canvas.renderMode == RenderMode.ScreenSpaceCamera)
+        {
+            cam = canvas.worldCamera;
+        }
+
+        Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(cam, targetRt.position);
+        Vector2 localPoint;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(parentRt, screenPoint, cam, out localPoint);
+        Selector.anchoredPosition = localPoint;
     }
 }
 
