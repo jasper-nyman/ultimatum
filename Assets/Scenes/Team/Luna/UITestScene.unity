@@ -164,9 +164,9 @@ RectTransform:
   - {fileID: 1477622327}
   m_Father: {fileID: 1061972555}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -7.8533, y: -199}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: -7.8533, y: 41.14}
   m_SizeDelta: {x: 498.7292, y: 61.4003}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &152537174
@@ -979,6 +979,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityPlayModeSaver::Framework.Utils.UnityPlayModeSaverSceneUtils
   _scenePrefabInstances:
+  - _gameObject: {fileID: 1675926600}
+    _prefab: Assets/Prefabs/Main Camera.prefab
+  - _gameObject: {fileID: 100482739}
+    _prefab: Assets/Scripts/Luna/Inventory/Cube (1).prefab
+  - _gameObject: {fileID: 1963802700}
+    _prefab: Assets/Scripts/Luna/Inventory/Sphere.prefab
+  - _gameObject: {fileID: 1935405892}
+    _prefab: Assets/Prefabs/Player.prefab
   - _gameObject: {fileID: 1778758090}
     _prefab: Assets/Scripts/Luna/Prefabs/Slot 1.prefab
   - _gameObject: {fileID: 410691172}
@@ -999,14 +1007,6 @@ MonoBehaviour:
     _prefab: Assets/Scripts/Luna/Prefabs/Slot 1.prefab
   - _gameObject: {fileID: 1655160141}
     _prefab: Assets/Scripts/Luna/Prefabs/Item.prefab
-  - _gameObject: {fileID: 1675926600}
-    _prefab: Assets/Prefabs/Main Camera.prefab
-  - _gameObject: {fileID: 100482739}
-    _prefab: Assets/Scripts/Luna/Inventory/Cube (1).prefab
-  - _gameObject: {fileID: 1963802700}
-    _prefab: Assets/Scripts/Luna/Inventory/Sphere.prefab
-  - _gameObject: {fileID: 1935405892}
-    _prefab: Assets/Prefabs/Player.prefab
 --- !u!4 &856279413
 Transform:
   m_ObjectHideFlags: 11
@@ -1275,10 +1275,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1200, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -1323,7 +1323,7 @@ RectTransform:
   m_Children:
   - {fileID: 152537173}
   - {fileID: 998290359}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1935405901}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1508,7 +1508,7 @@ PrefabInstance:
     - target: {fileID: 5601398975503687221, guid: 675879f915ac77d429a774bad8cfa6b5, type: 3}
       propertyPath: target
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1935405892}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1681,7 +1681,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 447.86084, y: -30.70015}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 57.5, y: 62.25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1477622328
 MonoBehaviour:
@@ -1716,7 +1716,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.08627451}
+  m_Color: {r: 1, g: 0.43646842, b: 0, a: 0.21960784}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -3562,6 +3562,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[19].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 152537177}
+    - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[20].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 152537177}
+    - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[19].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Scroll
+      objectReference: {fileID: 0}
+    - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[20].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: UseItem
+      objectReference: {fileID: 0}
     - target: {fileID: 1688878680452547672, guid: 929bda7756477c746ac112f921999db0, type: 3}
       propertyPath: m_Layer
       value: 8
@@ -3660,12 +3676,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4906764505480951499, guid: 929bda7756477c746ac112f921999db0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1061972555}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 929bda7756477c746ac112f921999db0, type: 3}
 --- !u!1 &1935405892 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7013303879205339138, guid: 929bda7756477c746ac112f921999db0, type: 3}
+  m_PrefabInstance: {fileID: 1935405891}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1935405901 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4906764505480951499, guid: 929bda7756477c746ac112f921999db0, type: 3}
   m_PrefabInstance: {fileID: 1935405891}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1963802700 stripped
@@ -4047,7 +4071,6 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 710953701}
-  - {fileID: 1061972555}
   - {fileID: 293441411}
   - {fileID: 2110736173}
   - {fileID: 510490501}

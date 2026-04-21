@@ -11,6 +11,15 @@ public class PlayerManager : MonoBehaviour
 
     // Crouch queue (exposed for PlayerController to set)
     private bool crouchQueued;
+    private PlayerStamina stamina;
+
+    // Stamina drain/regeneration rates (units per second)
+    [Tooltip("Stamina drained per second while sprinting and moving.")]
+    public float sprintStaminaDrainRate = 15f;
+    [Tooltip("Stamina regenerated per second when not sprinting.")]
+    public float staminaRegenRate = 10f;
+    // Fraction of max stamina required before sprinting is re-enabled after depletion
+    private float sprintResumeFraction = 0.2f;
 
     void Start()
     {
@@ -19,6 +28,13 @@ public class PlayerManager : MonoBehaviour
         var = GetComponent<PlayerVariables>();
         ctrl = GetComponent<PlayerController>();
         tracker = GetComponent<CameraTracker>();
+
+        // Ensure a PlayerStamina component exists so sprinting drains/regenerates stamina
+        stamina = GetComponent<PlayerStamina>();
+        if (stamina == null)
+        {
+            stamina = gameObject.AddComponent<PlayerStamina>();
+        }
 
         // Lock and hide the cursor
         Cursor.lockState = CursorLockMode.Locked;
@@ -123,24 +139,37 @@ public class PlayerManager : MonoBehaviour
             }
         }
 
-        if (var.isSprinting)
+        // Stamina drain and regen logic
+        if (stamina != null)
         {
-            // Drain stamina while sprinting
-            var.stamina -= var.staminaDrainRate * Time.deltaTime;
-            if (var.stamina <= 0f)
+            // If player is sprinting and moving, drain stamina
+            if (var.isSprinting && var.isMoving && var.canSprint)
             {
-                var.stamina = 0f;
-                var.isSprinting = false; // stop sprinting when stamina runs out
+                stamina.stamina -= sprintStaminaDrainRate * Time.deltaTime;
+                if (stamina.stamina <= 0f)
+                {
+                    stamina.stamina = 0f;
+                    // Stop sprinting and temporarily disable sprint until stamina recovers
+                    var.isSprinting = false;
+                    var.canSprint = false;
+                }
             }
-        }
-        else if (!var.isMoving)
-        {
-            // Regenerate stamina when not sprinting
-            if (var.stamina < 100f)
+            else
             {
-                var.stamina += var.staminaRegenRate * Time.deltaTime;
+                // Regenerate stamina when not sprinting
+                stamina.stamina += staminaRegenRate * Time.deltaTime;
+                if (stamina.stamina >= stamina.maxStamina * sprintResumeFraction)
+                {
+                    // Re-enable sprint when sufficient stamina recovered
+                    var.canSprint = true;
+                }
             }
+
+            // Clamp stamina
+            stamina.stamina = Mathf.Clamp(stamina.stamina, 0f, stamina.maxStamina);
         }
+
+        // Note: stamina is handled via the PlayerStamina component above.
     }
     
     public void SetCrouchQueued(bool queued)

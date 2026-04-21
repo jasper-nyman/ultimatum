@@ -3,17 +3,27 @@ using UnityEngine;
 public class StaminaBar : MonoBehaviour
 {
     RectTransform bar;
-    PlayerVariables var;
+    PlayerStamina stamina;
 
     private void Start()
     {
         bar = GetComponent<RectTransform>();
-        var = GameObject.FindWithTag("Player").GetComponent<PlayerVariables>();
+        var player = GameObject.FindWithTag("Player");
+        if (player != null)
+        {
+            stamina = player.GetComponent<PlayerStamina>();
+            if (stamina == null)
+            {
+                // Add a PlayerStamina component if one doesn't exist so the UI has a source.
+                stamina = player.AddComponent<PlayerStamina>();
+            }
+        }
     }
 
     private void Update()
     {
-        float width = (var.stamina / 100);
-        bar.localScale = new Vector3(width, 1, 1);
+        if (stamina == null) return;
+        float width = (stamina.stamina / Mathf.Max(1f, stamina.maxStamina));
+        bar.localScale = new Vector3(Mathf.Clamp01(width), 1, 1);
     }
 }

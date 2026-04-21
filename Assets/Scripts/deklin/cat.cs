@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.AI.Navigation;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using static door;
@@ -8,6 +9,8 @@ using static UnityEngine.GraphicsBuffer;
 
 public class cat : MonoBehaviour
 {
+    private const bool @true = true;
+    public bool ifcaptured;
     public int RayCastRange = 50;
     public float doorRange = 5f;
     Transform target;
@@ -85,13 +88,36 @@ public class cat : MonoBehaviour
     }
     IEnumerator<WaitForSeconds> CapturedPlayer()
     {
-        if (Vector3.Distance(transform.position, GameObject.FindWithTag("Player").transform.position) < 2)
+        if (Vector3.Distance(transform.position, GameObject.FindWithTag("Player").transform.position) < 1)
         {
-            FindFirstObjectByType<PlayerVariables>().canMove = false;
+            
+            FindFirstObjectByType<PlayerVariables>().canMove = false; 
+ 
             GetComponent<EnemyNavBehavior>().wonderTarget.position = transform.position;
             wonderTarget = transform;
             yield return new WaitForSeconds(5);
             FindFirstObjectByType<PlayerVariables>().canMove = true;
+            StartCoroutine(stopCapture());
         }
     }
+    IEnumerator<WaitForSeconds> stopCapture()
+    {
+        
+       
+        Collider[] colliders = Physics.OverlapSphere(transform.position, doorRange, doormask);
+        foreach (Collider collider in colliders)
+        {
+
+            if (collider.TryGetComponent(out door doorComponent))
+            {
+                if (doorComponent.state == doorstate.open)
+                {
+                    doorComponent.close();
+                }
+
+            }
+        } 
+        yield return null;
+    }
+
 }
