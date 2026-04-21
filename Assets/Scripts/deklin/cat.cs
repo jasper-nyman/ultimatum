@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
@@ -15,7 +16,7 @@ public class cat : MonoBehaviour
     public LayerMask doormask;
     public bool searchingForTarget = false;
     Vector3 wonderingPosition;
-    public Transform opendoor;
+    public static Transform opendoor;
     public Transform wonderTarget;
     public NavMeshSurface surface;
     private object position;
@@ -28,18 +29,8 @@ public class cat : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GetComponent<door>().state == doorstate.open)
-        {
-            wonderingPosition = wonderTarget.transform.position;
 
-        }
-        else
-        {
-
-
-        }
-
-            canSeeOpenDoor();
+        canSeeOpenDoor();
 
         if (Vector3.Distance(transform.position, target.position) < 2)
         {
@@ -49,15 +40,7 @@ public class cat : MonoBehaviour
         Collider[] colliders = Physics.OverlapSphere(transform.position, doorRange, doormask);
         foreach (Collider collider in colliders)
         {
-
-            if (collider.TryGetComponent(out door doorComponent))
-            {
-                if (doorComponent.state == doorstate.close)
-                {
-                    doorComponent.open();
-                }
-
-            }
+            StartCoroutine(CapturedPlayer());
         }
     }
 
@@ -93,7 +76,7 @@ public class cat : MonoBehaviour
 
             target = wonderTarget.transform;
         }
-        else
+        else if (opendoor != null)
         {
             target = opendoor.transform;
         }
@@ -104,10 +87,11 @@ public class cat : MonoBehaviour
     {
         if (Vector3.Distance(transform.position, GameObject.FindWithTag("Player").transform.position) < 2)
         {
-            GetComponent<PlayerVariables>().canMove = false;
+            FindFirstObjectByType<PlayerVariables>().canMove = false;
             GetComponent<EnemyNavBehavior>().wonderTarget.position = transform.position;
+            wonderTarget = transform;
             yield return new WaitForSeconds(5);
-            GetComponent<PlayerVariables>().canMove = true;
+            FindFirstObjectByType<PlayerVariables>().canMove = true;
         }
     }
 }
