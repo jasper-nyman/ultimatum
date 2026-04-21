@@ -9,7 +9,7 @@ using static UnityEngine.GraphicsBuffer;
 
 public class cat : MonoBehaviour
 {
-    private const bool @true = true;
+    
     public bool ifcaptured;
     public int RayCastRange = 50;
     public float doorRange = 5f;
@@ -84,15 +84,14 @@ public class cat : MonoBehaviour
             target = opendoor.transform;
         }
 
-        GetComponent<NavMeshAgent>().SetDestination(target.transform.position);
+        GetComponent<NavMeshAgent>().SetDestination(wonderTarget.transform.position);
     }
     IEnumerator<WaitForSeconds> CapturedPlayer()
     {
         if (Vector3.Distance(transform.position, GameObject.FindWithTag("Player").transform.position) < 1)
         {
-            
+            Debug.Log("Captured player");
             FindFirstObjectByType<PlayerVariables>().canMove = false; 
- 
             GetComponent<EnemyNavBehavior>().wonderTarget.position = transform.position;
             wonderTarget = transform;
             yield return new WaitForSeconds(5);
@@ -103,7 +102,7 @@ public class cat : MonoBehaviour
     IEnumerator<WaitForSeconds> stopCapture()
     {
         
-       
+       Debug.Log("Stopping capture");
         Collider[] colliders = Physics.OverlapSphere(transform.position, doorRange, doormask);
         foreach (Collider collider in colliders)
         {
