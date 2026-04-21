@@ -51,7 +51,7 @@ public class EnemyNavBehavior : MonoBehaviour
         }
     }
 
-    void newposition()
+    public void newposition()
     {
         float x = Random.Range(surface.navMeshData.sourceBounds.min.x, surface.navMeshData.sourceBounds.max.x);
         float y = 3.072f;
