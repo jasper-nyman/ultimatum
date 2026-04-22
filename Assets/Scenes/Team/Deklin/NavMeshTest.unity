@@ -1670,7 +1670,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4728121221950928380, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 12.75
+      value: 35.14
       objectReference: {fileID: 0}
     - target: {fileID: 4728121221950928380, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1678,7 +1678,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4728121221950928380, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -4.04
+      value: -15.43
       objectReference: {fileID: 0}
     - target: {fileID: 4728121221950928380, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1716,14 +1716,14 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 2577591998173982224, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 114231955}
+      addedObject: {fileID: 114231961}
   m_SourcePrefab: {fileID: 100100000, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
 --- !u!1 &114231954 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2577591998173982224, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
   m_PrefabInstance: {fileID: 114231953}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &114231955
+--- !u!114 &114231961
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1732,9 +1732,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 114231954}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bbdf0fa133e6f8a4dadfd64d310fa147, type: 3}
+  m_Script: {fileID: 11500000, guid: 6499eeb00c4f0994aa157ed2863158bf, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyNavBehavior
+  m_EditorClassIdentifier: Assembly-CSharp::cat
+  ifcaptured: 0
   RayCastRange: 50
   doorRange: 5
   obstacleMask:
@@ -1742,10 +1743,9 @@ MonoBehaviour:
     m_Bits: 64
   doormask:
     serializedVersion: 2
-    m_Bits: 128
-  searchingForTarget: 1
-  player: {fileID: 1746441035}
-  wonderTarget: {fileID: 793506567}
+    m_Bits: 256
+  searchingForTarget: 0
+  wonderTarget: {fileID: 1102782119}
   surface: {fileID: 1965149466}
 --- !u!1 &114806138
 GameObject:
@@ -12375,6 +12375,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 2873735649371865283, guid: f25e86846fcd57c4bae96763c23429ca, type: 3}
   m_PrefabInstance: {fileID: 1102782117}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &1102782119 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8530737724214967516, guid: f25e86846fcd57c4bae96763c23429ca, type: 3}
+  m_PrefabInstance: {fileID: 1102782117}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1104821303 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7013303879205339138, guid: 929bda7756477c746ac112f921999db0, type: 3}
@@ -16828,6 +16833,10 @@ PrefabInstance:
     - target: {fileID: 2577591998173982224, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
       propertyPath: m_Name
       value: Capsule
+      objectReference: {fileID: 0}
+    - target: {fileID: 2577591998173982224, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4085058951993416379, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
       propertyPath: m_Speed
