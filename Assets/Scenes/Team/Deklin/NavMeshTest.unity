@@ -1652,6 +1652,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: doormaster
       objectReference: {fileID: 0}
+    - target: {fileID: 2577591998173982224, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4085058951993416379, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
       propertyPath: m_Speed
       value: 5.5
@@ -1708,46 +1712,46 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1104821312}
+    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+      propertyPath: surface
+      value: 
+      objectReference: {fileID: 1965149466}
+    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+      propertyPath: targetType
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+      propertyPath: wanderTarget
+      value: 
+      objectReference: {fileID: 1102782119}
+    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+      propertyPath: canCloseDoors
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+      propertyPath: doorMask.m_Bits
+      value: 128
+      objectReference: {fileID: 0}
+    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+      propertyPath: obstacleMask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 8095907370858291566, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
     - {fileID: 6265238550036369766, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2577591998173982224, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 114231961}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
 --- !u!1 &114231954 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2577591998173982224, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
   m_PrefabInstance: {fileID: 114231953}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &114231961
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 114231954}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6499eeb00c4f0994aa157ed2863158bf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::cat
-  ifcaptured: 0
-  RayCastRange: 50
-  doorRange: 5
-  target: {fileID: 0}
-  hitwall: 0
-  obstacleMask:
-    m_Bits: 64
-  doormask:
-    m_Bits: 256
-  searchingForTarget: 0
-  wonderingPosition: {x: 0, y: 0, z: 0}
-  wonderTarget: {fileID: 1102782119}
-  surface: {fileID: 1965149466}
 --- !u!1 &114806138
 GameObject:
   m_ObjectHideFlags: 0
@@ -15610,11 +15614,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1180037839}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
---- !u!4 &1746441035 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 9133145828466871400, guid: 929bda7756477c746ac112f921999db0, type: 3}
-  m_PrefabInstance: {fileID: 731415105}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1747140661
 GameObject:
   m_ObjectHideFlags: 0
@@ -16895,46 +16894,42 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1104821312}
+    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+      propertyPath: surface
+      value: 
+      objectReference: {fileID: 1965149466}
+    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+      propertyPath: canOpenDoors
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+      propertyPath: wanderTarget
+      value: 
+      objectReference: {fileID: 793506567}
+    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+      propertyPath: doorMask.m_Bits
+      value: 128
+      objectReference: {fileID: 0}
+    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+      propertyPath: obstacleMask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 8095907370858291566, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
     - {fileID: 6265238550036369766, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2577591998173982224, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 8788603797264527181}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
 --- !u!1 &8788603797264527180 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2577591998173982224, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
   m_PrefabInstance: {fileID: 8788603797264527179}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8788603797264527181
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8788603797264527180}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bbdf0fa133e6f8a4dadfd64d310fa147, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyNavBehavior
-  RayCastRange: 50
-  doorRange: 5
-  target: {fileID: 0}
-  hitwall: 0
-  obstacleMask:
-    m_Bits: 64
-  doormask:
-    m_Bits: 128
-  searchingForTarget: 1
-  wonderingPosition: {x: 0, y: 0, z: 0}
-  player: {fileID: 1746441035}
-  wonderTarget: {fileID: 793506567}
-  surface: {fileID: 1965149466}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
