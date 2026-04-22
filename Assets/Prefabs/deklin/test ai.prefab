@@ -13,11 +13,10 @@ GameObject:
   - component: {fileID: 2549960146524878779}
   - component: {fileID: 6018394797672429274}
   - component: {fileID: 4085058951993416379}
-  - component: {fileID: 6265238550036369766}
-  - component: {fileID: 8095907370858291566}
+  - component: {fileID: 8437740449978310411}
   m_Layer: 0
   m_Name: test ai
-  m_TagString: Untagged
+  m_TagString: Doormaster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -139,7 +138,7 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &6265238550036369766
+--- !u!114 &8437740449978310411
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -148,38 +147,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 2577591998173982224}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30d813ba9e575424794d0d0547f30014, type: 3}
+  m_Script: {fileID: 11500000, guid: e1becd9cba54d574b8442d9f17aa96ec, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NewMonoBehaviourScript
---- !u!114 &8095907370858291566
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2577591998173982224}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
-  m_SerializedVersion: 0
-  m_AgentTypeID: 0
-  m_CollectObjects: 0
-  m_Size: {x: 10, y: 10, z: 10}
-  m_Center: {x: 0, y: 2, z: 0}
-  m_LayerMask:
+  m_EditorClassIdentifier: Assembly-CSharp::Enemy
+  targetType: 0
+  surface: {fileID: 0}
+  wanderTarget: {fileID: 0}
+  player: {fileID: 0}
+  distanceToNewWanderTarget: 2
+  obstacleMask:
     serializedVersion: 2
-    m_Bits: 4294967295
-  m_UseGeometry: 0
-  m_DefaultArea: 0
-  m_GenerateLinks: 0
-  m_IgnoreNavMeshAgent: 1
-  m_IgnoreNavMeshObstacle: 1
-  m_OverrideTileSize: 0
-  m_TileSize: 256
-  m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
-  m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: e5089e253ef287f4291d2dcafbd310ae, type: 2}
-  m_BuildHeightMesh: 1
+    m_Bits: 0
+  doorRange: 5
+  doorMask:
+    serializedVersion: 2
+    m_Bits: 0
+  canOpenDoors: 0
+  canCloseDoors: 0

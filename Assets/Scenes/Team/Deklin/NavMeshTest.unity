@@ -1650,7 +1650,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2577591998173982224, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
       propertyPath: m_Name
-      value: cat
+      value: doormaster
       objectReference: {fileID: 0}
     - target: {fileID: 4085058951993416379, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
       propertyPath: m_Speed
@@ -1738,13 +1738,14 @@ MonoBehaviour:
   ifcaptured: 0
   RayCastRange: 50
   doorRange: 5
+  target: {fileID: 0}
+  hitwall: 0
   obstacleMask:
-    serializedVersion: 2
     m_Bits: 64
   doormask:
-    serializedVersion: 2
     m_Bits: 256
   searchingForTarget: 0
+  wonderingPosition: {x: 0, y: 0, z: 0}
   wonderTarget: {fileID: 1102782119}
   surface: {fileID: 1965149466}
 --- !u!1 &114806138
@@ -10502,6 +10503,8 @@ MonoBehaviour:
   _scenePrefabInstances:
   - _gameObject: {fileID: 8788603797264527180}
     _prefab: Assets/Prefabs/deklin/test ai.prefab
+  - _gameObject: {fileID: 114231954}
+    _prefab: Assets/Prefabs/deklin/test ai.prefab
   - _gameObject: {fileID: 1104821303}
     _prefab: Assets/Prefabs/Player.prefab
   - _gameObject: {fileID: 881828687}
@@ -10530,8 +10533,6 @@ MonoBehaviour:
     _prefab: Assets/Prefabs/deklin/door.prefab
   - _gameObject: {fileID: 1579246457}
     _prefab: Assets/Prefabs/deklin/Particle System Variant.prefab
-  - _gameObject: {fileID: 114231954}
-    _prefab: Assets/Prefabs/deklin/test ai.prefab
   - _gameObject: {fileID: 1102782118}
     _prefab: Assets/Prefabs/deklin/wondertarget.prefab
 --- !u!4 &817155148
@@ -12335,7 +12336,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8530737724214967516, guid: f25e86846fcd57c4bae96763c23429ca, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5.33
+      value: -4.42
       objectReference: {fileID: 0}
     - target: {fileID: 8530737724214967516, guid: f25e86846fcd57c4bae96763c23429ca, type: 3}
       propertyPath: m_LocalRotation.w
@@ -16832,7 +16833,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2577591998173982224, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
       propertyPath: m_Name
-      value: Capsule
+      value: percy
       objectReference: {fileID: 0}
     - target: {fileID: 2577591998173982224, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
       propertyPath: m_IsActive
@@ -16923,13 +16924,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyNavBehavior
   RayCastRange: 50
   doorRange: 5
+  target: {fileID: 0}
+  hitwall: 0
   obstacleMask:
-    serializedVersion: 2
     m_Bits: 64
   doormask:
-    serializedVersion: 2
     m_Bits: 128
   searchingForTarget: 1
+  wonderingPosition: {x: 0, y: 0, z: 0}
   player: {fileID: 1746441035}
   wonderTarget: {fileID: 793506567}
   surface: {fileID: 1965149466}
@@ -16941,6 +16943,7 @@ SceneRoots:
   - {fileID: 1965149465}
   - {fileID: 1180037839}
   - {fileID: 8788603797264527179}
+  - {fileID: 114231953}
   - {fileID: 731415105}
   - {fileID: 881828686}
   - {fileID: 817155148}
@@ -16956,5 +16959,4 @@ SceneRoots:
   - {fileID: 1808877185}
   - {fileID: 832213039}
   - {fileID: 1310252889801604935}
-  - {fileID: 114231953}
   - {fileID: 1102782117}
