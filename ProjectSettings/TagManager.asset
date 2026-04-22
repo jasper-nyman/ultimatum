@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 3
   tags:
   - Door
+  - Percy
+  - Doormaster
   layers:
   - Default
   - TransparentFX

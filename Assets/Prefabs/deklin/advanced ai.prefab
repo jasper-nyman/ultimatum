@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: advanced ai
       objectReference: {fileID: 0}
+    - target: {fileID: 2577591998173982224, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+      propertyPath: m_TagString
+      value: Percy
+      objectReference: {fileID: 0}
     - target: {fileID: 4085058951993416379, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
       propertyPath: m_Height
       value: 2.06
@@ -88,12 +92,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 7282136813496991133}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bbdf0fa133e6f8a4dadfd64d310fa147, type: 3}
+  m_Script: {fileID: 11500000, guid: e1becd9cba54d574b8442d9f17aa96ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyNavBehavior
-  RayCastRange: 50
+  targetType: 0
+  surface: {fileID: 0}
+  wanderTarget: {fileID: 0}
+  player: {fileID: 0}
+  distanceToNewWanderTarget: 2
   obstacleMask:
     serializedVersion: 2
     m_Bits: 0
-  searchingForTarget: 0
-  player: {fileID: 0}
+  doorRange: 5
+  doorMask:
+    serializedVersion: 2
+    m_Bits: 0
+  canOpenDoors: 0
+  canCloseDoors: 0

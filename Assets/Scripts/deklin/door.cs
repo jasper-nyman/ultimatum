@@ -5,6 +5,8 @@ using UnityEngine.AI;
 
 public class door : MonoBehaviour, IInteractable
 {
+    public static Transform openDoor;
+
     public enum doorstate
     {
         open,
@@ -45,7 +47,7 @@ public class door : MonoBehaviour, IInteractable
         GetComponent<AudioSource>().PlayOneShot(openNoise);
         Invoke(nameof(rebakeNavMesh), 1f);
 
-        cat.opendoor = transform;
+        openDoor = transform;
     }
 
     public void close()
