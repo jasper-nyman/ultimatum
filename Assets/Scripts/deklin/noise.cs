@@ -9,11 +9,11 @@ public class noise : MonoBehaviour
     {
         if (GetComponent<AudioSource>().isPlaying == true)
         {
-            float distance = GetDistance(transform.position, FindFirstObjectByType<EnemyNavBehavior>().transform.position);
+            float distance = GetDistance(transform.position, GameObject.FindWithTag("Percy").transform.position);
 
             if (distance < noiserange)
             {
-                FindFirstObjectByType<EnemyNavBehavior>().wonderTarget.transform.position = transform.position;
+                GameObject.FindWithTag("Percy").GetComponent<Enemy>().wanderTarget.transform.position = transform.position;
             }
         }
     }
