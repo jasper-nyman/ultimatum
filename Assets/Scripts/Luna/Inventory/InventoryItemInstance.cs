@@ -108,6 +108,56 @@ public class InventoryItemInstance : MonoBehaviour
             }
         }
 
+        // If this item should spawn a throwable noise-maker, create one in front of the player
+        if (data.spawnThrowableOnUse)
+        {
+            var player = GameObject.FindWithTag("Player");
+            if (player != null)
+            {
+                // Determine spawn position slightly in front of player's head
+                Camera cam = Camera.main;
+                Vector3 spawnPos = player.transform.position + player.transform.forward * 1f + Vector3.up * 1.2f;
+                Quaternion rot = Quaternion.identity;
+                if (cam != null)
+                {
+                    spawnPos = cam.transform.position + cam.transform.forward * 0.8f;
+                    rot = cam.transform.rotation;
+                }
+
+                GameObject go = null;
+                if (data.throwableModel != null)
+                {
+                    go = Instantiate(data.throwableModel, spawnPos, rot);
+                }
+                else
+                {
+                    go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    go.transform.position = spawnPos;
+                    go.transform.rotation = rot;
+                }
+
+                // Ensure it has a Rigidbody and NoiseMakerThrown behaviour
+                var rb = go.GetComponent<Rigidbody>();
+                if (rb == null) rb = go.AddComponent<Rigidbody>();
+                var nm = go.GetComponent<NoiseMakerThrown>();
+                if (nm == null) nm = go.AddComponent<NoiseMakerThrown>();
+                nm.stayDuration = Mathf.Max(0.1f, data.throwableDuration);
+
+                // Apply initial throw force
+                rb.AddForce((cam != null ? cam.transform.forward : player.transform.forward) * data.throwableThrowForce, ForceMode.VelocityChange);
+
+                // Remove collider's mesh if we created a primitive and keep a BoxCollider instead
+                var mc = go.GetComponent<MeshCollider>();
+                if (mc != null) { Destroy(mc); }
+                var col = go.GetComponent<Collider>();
+                if (col == null) go.AddComponent<BoxCollider>();
+            }
+            else
+            {
+                Debug.LogWarning("No Player found to spawn throwable from.", this);
+            }
+        }
+
         if (data.isConsumable)
         {
             var inv = FindFirstObjectByType<Inventory>();
@@ -115,6 +165,7 @@ public class InventoryItemInstance : MonoBehaviour
             {
                 inv.items.Remove(data);
                 inv.EvaluateInventory();
+                Inventory.NotifyItemUsed();
             }
         }
     }

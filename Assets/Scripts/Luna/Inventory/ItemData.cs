@@ -24,6 +24,15 @@ public class ItemData : ScriptableObject
 
     [Tooltip("If true, using this item will restore the player's stamina to full.")]
     public bool restoreFullStaminaOnUse = false;
+    [Header("Throwable / Noise Maker options")]
+    [Tooltip("When true, using this item will spawn a throwable noise-maker object in front of the player.")]
+    public bool spawnThrowableOnUse = false;
+    [Tooltip("Optional prefab or model to use for the thrown object. If null, a cube primitive will be used.")]
+    public GameObject throwableModel;
+    [Tooltip("How long (seconds) the thrown object will remain on the surface before being destroyed.")]
+    public float throwableDuration = 12f;
+    [Tooltip("Initial throw force applied to the spawned object.")]
+    public float throwableThrowForce = 6f;
 
     public void Punch()
     {

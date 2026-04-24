@@ -1007,6 +1007,8 @@ MonoBehaviour:
     _prefab: Assets/Scripts/Luna/Prefabs/Slot 1.prefab
   - _gameObject: {fileID: 1655160141}
     _prefab: Assets/Scripts/Luna/Prefabs/Item.prefab
+  - _gameObject: {fileID: 1727319249}
+    _prefab: Assets/Scripts/Luna/Inventory/Noise Maker Test Model.prefab
 --- !u!4 &856279413
 Transform:
   m_ObjectHideFlags: 11
@@ -1654,7 +1656,7 @@ GameObject:
   - component: {fileID: 1444375977}
   - component: {fileID: 1444375976}
   m_Layer: 0
-  m_Name: Test Item 3
+  m_Name: Noise Maker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2313,6 +2315,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 89.895}
+--- !u!1 &1727319249 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5034874038458670792, guid: 7e0979b04ed1e504e8ba0dce5bf84cf4, type: 3}
+  m_PrefabInstance: {fileID: 6851387110910706049}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1778758090 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7957622163193120923, guid: d73297a1846358d499c5eed26ee32cce, type: 3}
@@ -3963,7 +3970,7 @@ GameObject:
   - component: {fileID: 2110736170}
   - component: {fileID: 2110736169}
   m_Layer: 0
-  m_Name: Test Item 1
+  m_Name: punching glove gun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4087,6 +4094,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cube (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 404061130229404162, guid: de98f1c4b09c9934b8ec40eb7ba2783c, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 654964015128072691, guid: de98f1c4b09c9934b8ec40eb7ba2783c, type: 3}
       propertyPath: m_LocalPosition.x
       value: -491.80298
@@ -4146,11 +4157,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7709169513421727176, guid: 2f83dae070ef36840969d7703cac55d6, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.18984
+      value: -0.02
       objectReference: {fileID: 0}
     - target: {fileID: 7709169513421727176, guid: 2f83dae070ef36840969d7703cac55d6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 249.46721
+      value: 253.79
       objectReference: {fileID: 0}
     - target: {fileID: 7709169513421727176, guid: 2f83dae070ef36840969d7703cac55d6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4183,6 +4194,10 @@ PrefabInstance:
     - target: {fileID: 8614382108187403381, guid: 2f83dae070ef36840969d7703cac55d6, type: 3}
       propertyPath: m_Name
       value: Sphere
+      objectReference: {fileID: 0}
+    - target: {fileID: 8614382108187403381, guid: 2f83dae070ef36840969d7703cac55d6, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4318,6 +4333,67 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d73297a1846358d499c5eed26ee32cce, type: 3}
+--- !u!1001 &6851387110910706049
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5034874038458670792, guid: 7e0979b04ed1e504e8ba0dce5bf84cf4, type: 3}
+      propertyPath: m_Name
+      value: Noise Maker Test Model
+      objectReference: {fileID: 0}
+    - target: {fileID: 5034874038458670792, guid: 7e0979b04ed1e504e8ba0dce5bf84cf4, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6983499034803110666, guid: 7e0979b04ed1e504e8ba0dce5bf84cf4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -462.48123
+      objectReference: {fileID: 0}
+    - target: {fileID: 6983499034803110666, guid: 7e0979b04ed1e504e8ba0dce5bf84cf4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6983499034803110666, guid: 7e0979b04ed1e504e8ba0dce5bf84cf4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 264.437
+      objectReference: {fileID: 0}
+    - target: {fileID: 6983499034803110666, guid: 7e0979b04ed1e504e8ba0dce5bf84cf4, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6983499034803110666, guid: 7e0979b04ed1e504e8ba0dce5bf84cf4, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6983499034803110666, guid: 7e0979b04ed1e504e8ba0dce5bf84cf4, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6983499034803110666, guid: 7e0979b04ed1e504e8ba0dce5bf84cf4, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6983499034803110666, guid: 7e0979b04ed1e504e8ba0dce5bf84cf4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6983499034803110666, guid: 7e0979b04ed1e504e8ba0dce5bf84cf4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6983499034803110666, guid: 7e0979b04ed1e504e8ba0dce5bf84cf4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7e0979b04ed1e504e8ba0dce5bf84cf4, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -4337,3 +4413,4 @@ SceneRoots:
   - {fileID: 3551035961778643036}
   - {fileID: 5095884407635833807}
   - {fileID: 1935405891}
+  - {fileID: 6851387110910706049}

@@ -124,6 +124,21 @@ public class ExtendablePlane : MonoBehaviour
     // Event invoked when the plane has fully retracted and is about to be destroyed.
     // Other systems (e.g., player controller) can listen to this to restore movement.
     public UnityEvent onFinished;
+    // Guard to ensure we notify listeners exactly once even if destroyed unexpectedly
+    private bool _finishedNotified = false;
+
+    private void NotifyFinishedOnce()
+    {
+        if (_finishedNotified) return;
+        _finishedNotified = true;
+        try { onFinished?.Invoke(); } catch { }
+    }
+
+    private void OnDestroy()
+    {
+        // Ensure listeners are notified if the plane is destroyed by any other means
+        NotifyFinishedOnce();
+    }
 
     private void Awake()
     {
@@ -409,22 +424,39 @@ public class ExtendablePlane : MonoBehaviour
             return;
         }
 
-        // Raycast from origin (not from visual center) to check if we've hit something within the current length.
-        var originPos = origin != null ? origin.position : transform.position;
-        if (Physics.Raycast(originPos, _worldForward, out RaycastHit hit, _currentLength, collisionMask, QueryTriggerInteraction.Ignore))
+        // Raycast along the beam and consider the closest relevant hit. Use RaycastAll to
+        // be robust to complex colliders and ensure we find pushable objects even if the
+        // first returned hit is a child collider or otherwise ordered differently.
+        var originPos = transform.position;
+        var rayDir = transform.forward;
+        var hits = Physics.RaycastAll(originPos, rayDir, _currentLength, collisionMask, QueryTriggerInteraction.Ignore);
+        if (hits != null && hits.Length > 0)
         {
-            // If we hit something that is pushable, begin pushing its Rigidbody instead of immediately retracting.
-            if (TryGetPushableRigidbody(hit.collider, out var hitRb))
+            // Sort hits by distance so we handle the nearest first
+            System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+            bool handled = false;
+            foreach (var hh in hits)
             {
-                // Start pushing this object. Set current length to contact point so visual looks correct.
-                _currentLength = Mathf.Max(hit.distance - 0.01f, MinLength);
-                BeginPushing(hitRb, hit.collider);
-            }
-            else
-            {
-                // Hit a non-pushable object — set length to hit and start retracting.
-                _currentLength = Mathf.Max(hit.distance - 0.01f, MinLength);
+                if (hh.collider == null) continue;
+                // If this hit corresponds to a pushable, begin pushing it.
+                if (TryGetPushableRigidbody(hh.collider, out var hitRb))
+                {
+                    _currentLength = Mathf.Max(hh.distance - 0.01f, MinLength);
+                    BeginPushing(hitRb, hh.collider);
+                    handled = true;
+                    break;
+                }
+
+                // If the hit is not pushable, treat it as an obstacle and retract.
+                _currentLength = Mathf.Max(hh.distance - 0.01f, MinLength);
                 StartRetracting();
+                handled = true;
+                break;
+            }
+
+            if (handled)
+            {
+                // we've processed the nearest hit
             }
         }
         else if (_elapsed >= maxDuration)
@@ -519,7 +551,7 @@ public class ExtendablePlane : MonoBehaviour
             UpdateVisual();
             _state = State.Finished;
             // Notify listeners that the plane has finished before destroying it
-                onFinished?.Invoke();
+                NotifyFinishedOnce();
 
                 // If we were pushing an object, restore its physics state
                 if (_isPushing && _pushedRb != null)
