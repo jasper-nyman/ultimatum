@@ -24,9 +24,8 @@ public class Enemy : MonoBehaviour
     public LayerMask doorMask;
     public bool canOpenDoors;
     public bool canCloseDoors;
-
     private Transform currentTarget;
-
+   
     private void Start()
     {
         NewWanderPosition();
@@ -112,7 +111,7 @@ public class Enemy : MonoBehaviour
         return doors;
     }
 
-    private void OpenNearbyDoors()
+    public void OpenNearbyDoors()
     {
         foreach (door doorComponent in GetNearbyDoors())
         {
@@ -123,7 +122,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void CloseNearbyDoors()
+    public void CloseNearbyDoors()
     {
         foreach (door doorComponent in GetNearbyDoors())
         {
@@ -132,18 +131,5 @@ public class Enemy : MonoBehaviour
                 doorComponent.close();
             }
         }
-    }
-
-    IEnumerator CapturePlayer()
-    {
-        Debug.Log("Captured player");
-
-        FindFirstObjectByType<PlayerVariables>().canMove = false;
-        GameObject.FindWithTag("Percy").GetComponent<Enemy>().wanderTarget.position = transform.position;
-        wanderTarget = transform;
-
-        yield return new WaitForSeconds(5);
-
-        FindFirstObjectByType<PlayerVariables>().canMove = true;
     }
 }

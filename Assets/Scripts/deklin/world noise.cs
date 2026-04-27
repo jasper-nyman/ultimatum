@@ -14,8 +14,10 @@ public class worldnoise : MonoBehaviour
     {
         if (GetComponent<door>().GetComponent<AudioSource>().isPlaying== true )
         {
-            GameObject.FindWithTag("Percy").GetComponent<Enemy>().wanderTarget.transform.position = transform.position;
-
+            if (GameObject.FindWithTag("Percy"))
+            {
+                GameObject.FindWithTag("Percy").GetComponent<Enemy>().wanderTarget.transform.position = transform.position;
+            }
         }
     }
 }

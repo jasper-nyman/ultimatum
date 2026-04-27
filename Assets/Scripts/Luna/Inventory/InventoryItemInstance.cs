@@ -142,6 +142,8 @@ public class InventoryItemInstance : MonoBehaviour
                 var nm = go.GetComponent<NoiseMakerThrown>();
                 if (nm == null) nm = go.AddComponent<NoiseMakerThrown>();
                 nm.stayDuration = Mathf.Max(0.1f, data.throwableDuration);
+                // Ensure the thrown object ignores the spawning player so it won't immediately collide/stick
+                nm.playerToIgnore = player;
 
                 // Apply initial throw force
                 rb.AddForce((cam != null ? cam.transform.forward : player.transform.forward) * data.throwableThrowForce, ForceMode.VelocityChange);
