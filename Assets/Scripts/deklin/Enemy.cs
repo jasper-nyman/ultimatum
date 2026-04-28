@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Linq;
 using Unity.AI.Navigation;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -19,13 +20,13 @@ public class Enemy : MonoBehaviour
 
     public float distanceToNewWanderTarget = 2f;
     public LayerMask obstacleMask;
-
+    public bool papadopoulos;
     public float doorRange = 5f;
     public LayerMask doorMask;
     public bool canOpenDoors;
     public bool canCloseDoors;
     private Transform currentTarget;
-   
+
     private void Start()
     {
         NewWanderPosition();
@@ -48,11 +49,11 @@ public class Enemy : MonoBehaviour
             {
                 NewWanderPosition();
             }
-        
-        GetComponent<NavMeshAgent>().SetDestination(currentTarget.transform.position);
+
+            GetComponent<NavMeshAgent>().SetDestination(currentTarget.transform.position);
         }
 
-      
+
 
         if (canOpenDoors)
         {
@@ -62,6 +63,10 @@ public class Enemy : MonoBehaviour
         if (canCloseDoors)
         {
             CloseNearbyDoors();
+        }
+        if(papadopoulos == true)
+        {
+            followcamera();
         }
     }
 
@@ -132,4 +137,14 @@ public class Enemy : MonoBehaviour
             }
         }
     }
+
+    public void followcamera()
+    {
+        if (currentTarget)
+        {
+           wanderTarget.position = FindAnyObjectByType<Camera>().transform.position + new Vector3(0, -10, 10);
+            Camera.main.transform.LookAt(transform);
+        }
+    }
+    
 }
