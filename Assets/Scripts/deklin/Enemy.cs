@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Linq;
+using System.Threading;
 using Unity.AI.Navigation;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -50,6 +51,12 @@ public class Enemy : MonoBehaviour
             currentTarget = wanderTarget;
         }
 
+       if (papadopoulos == true && FindAnyObjectByType<flashlight>().enabled == true && Vector3.Dot(FindAnyObjectByType<flashlight>().transform.forward, transform.position - FindAnyObjectByType<flashlight>().transform.position) > 5)
+       {
+            NewWanderPosition();
+            wanderTarget.position = new Vector3(wanderTarget.position.x, wanderTarget.position.y, wanderTarget.position.z);
+            StartCoroutine(backtoit());
+        }
         if (currentTarget)
         {
             if (Vector3.Distance(transform.position, currentTarget.position) < distanceToNewWanderTarget)
@@ -153,5 +160,10 @@ public class Enemy : MonoBehaviour
             
         }
     }
-    
+   IEnumerator backtoit()
+    {
+        yield return new WaitForSeconds(8f);
+        yield return currentTarget;
+    }
+
 }

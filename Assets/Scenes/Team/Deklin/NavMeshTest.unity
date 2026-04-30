@@ -10276,7 +10276,23 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
+      propertyPath: m_ActionEvents.Array.size
+      value: 22
+      objectReference: {fileID: 0}
+    - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[21].m_ActionId
+      value: 6bea8c3d-627d-4925-b7fb-1e0dfef80e43
+      objectReference: {fileID: 0}
+    - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[21].m_ActionName
+      value: 'Player/flashlight[/Keyboard/f]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
       propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[21].m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
@@ -10284,11 +10300,23 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[21].m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
       propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 881828688}
     - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[21].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 131801875}
+    - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
       propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[21].m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
@@ -10296,11 +10324,23 @@ PrefabInstance:
       value: Interact
       objectReference: {fileID: 0}
     - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[21].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ToggleFlashlight
+      objectReference: {fileID: 0}
+    - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
       propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
       value: PlayerInteraction, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[21].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: flashlight, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
       propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
+      propertyPath: m_ActionEvents.Array.data[21].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 1654421634570635940, guid: 929bda7756477c746ac112f921999db0, type: 3}
@@ -10430,6 +10470,18 @@ PrefabInstance:
     - target: {fileID: 7013303879205339138, guid: 929bda7756477c746ac112f921999db0, type: 3}
       propertyPath: m_Layer
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133145828466871400, guid: 929bda7756477c746ac112f921999db0, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133145828466871400, guid: 929bda7756477c746ac112f921999db0, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.11
+      objectReference: {fileID: 0}
+    - target: {fileID: 9133145828466871400, guid: 929bda7756477c746ac112f921999db0, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -10660,8 +10712,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityPlayModeSaver::Framework.Utils.UnityPlayModeSaverSceneUtils
   _scenePrefabInstances:
-  - _gameObject: {fileID: 8788603797264527180}
-    _prefab: Assets/Prefabs/deklin/test ai.prefab
   - _gameObject: {fileID: 114231954}
     _prefab: Assets/Prefabs/deklin/doormaster Variant.prefab
   - _gameObject: {fileID: 1104821303}
@@ -10710,8 +10760,6 @@ MonoBehaviour:
     _prefab: Assets/Prefabs/deklin/door.prefab
   - _gameObject: {fileID: 964181406}
     _prefab: Assets/Prefabs/deklin/door.prefab
-  - _gameObject: {fileID: 1579246457}
-    _prefab: Assets/Prefabs/deklin/Particle System Variant.prefab
   - _gameObject: {fileID: 1102782118}
     _prefab: Assets/Prefabs/deklin/wondertarget.prefab
   - _gameObject: {fileID: 1603165018}
@@ -10720,6 +10768,8 @@ MonoBehaviour:
     _prefab: Assets/Prefabs/deklin/wondertarget.prefab
   - _gameObject: {fileID: 1191929301}
     _prefab: Assets/Prefabs/deklin/advanced ai.prefab
+  - _gameObject: {fileID: 1579246457}
+    _prefab: Assets/Prefabs/deklin/Particle System Variant.prefab
 --- !u!4 &817155148
 Transform:
   m_ObjectHideFlags: 11
@@ -13305,6 +13355,10 @@ PrefabInstance:
     - target: {fileID: 7282136813496991133, guid: 08feb77605079704facabb97b6f17521, type: 3}
       propertyPath: m_Name
       value: advanced ai
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282136813496991133, guid: 08feb77605079704facabb97b6f17521, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9113915535616903478, guid: 08feb77605079704facabb97b6f17521, type: 3}
       propertyPath: m_Speed
@@ -17354,114 +17408,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f40989540ac263049b566ed8217e25df, type: 3}
---- !u!1001 &8788603797264527179
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 2577591998173982224, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: m_Name
-      value: percy
-      objectReference: {fileID: 0}
-    - target: {fileID: 2577591998173982224, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4085058951993416379, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: m_Speed
-      value: 5.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4085058951993416379, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: m_Height
-      value: 2.06
-      objectReference: {fileID: 0}
-    - target: {fileID: 4085058951993416379, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: m_Radius
-      value: 0.89
-      objectReference: {fileID: 0}
-    - target: {fileID: 4085058951993416379, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: m_StoppingDistance
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4728121221950928380, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 12.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 4728121221950928380, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 3.072
-      objectReference: {fileID: 0}
-    - target: {fileID: 4728121221950928380, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -4.04
-      objectReference: {fileID: 0}
-    - target: {fileID: 4728121221950928380, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4728121221950928380, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4728121221950928380, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4728121221950928380, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4728121221950928380, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4728121221950928380, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4728121221950928380, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: player
-      value: 
-      objectReference: {fileID: 1104821312}
-    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: surface
-      value: 
-      objectReference: {fileID: 1965149466}
-    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: canOpenDoors
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: wanderTarget
-      value: 
-      objectReference: {fileID: 793506567}
-    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: doorMask.m_Bits
-      value: 128
-      objectReference: {fileID: 0}
-    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-      propertyPath: obstacleMask.m_Bits
-      value: 64
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 8095907370858291566, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-    - {fileID: 6265238550036369766, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
---- !u!1 &8788603797264527180 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2577591998173982224, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
-  m_PrefabInstance: {fileID: 8788603797264527179}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -17469,7 +17415,6 @@ SceneRoots:
   - {fileID: 362717215}
   - {fileID: 1965149465}
   - {fileID: 1180037839}
-  - {fileID: 8788603797264527179}
   - {fileID: 5732269750936017959}
   - {fileID: 731415105}
   - {fileID: 881828686}
@@ -17485,8 +17430,8 @@ SceneRoots:
   - {fileID: 1263699913}
   - {fileID: 1808877185}
   - {fileID: 832213039}
-  - {fileID: 1310252889801604935}
   - {fileID: 1102782117}
   - {fileID: 7583683189642036979}
   - {fileID: 2101038248}
   - {fileID: 1193756840}
+  - {fileID: 1310252889801604935}
