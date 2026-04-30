@@ -14,7 +14,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4085058951993416379, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
       propertyPath: m_StoppingDistance
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4728121221950928380, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
       propertyPath: m_LocalPosition.x
@@ -55,6 +55,18 @@ PrefabInstance:
     - target: {fileID: 4728121221950928380, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+      propertyPath: papadopoulos
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+      propertyPath: doorMask.m_Bits
+      value: 128
+      objectReference: {fileID: 0}
+    - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+      propertyPath: obstacleMask.m_Bits
+      value: 64
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

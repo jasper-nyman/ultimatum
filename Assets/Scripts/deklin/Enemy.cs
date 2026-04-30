@@ -34,13 +34,20 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        if (targetType == TargetType.Player)
+        if (papadopoulos == false)
         {
-            TryTrackTarget(player);
+            if (targetType == TargetType.Player)
+            {
+                TryTrackTarget(player);
+            }
+            else if (targetType == TargetType.OpenDoor && door.openDoor != null)
+            {
+                TryTrackTarget(door.openDoor);
+            }
         }
-        else if (targetType == TargetType.OpenDoor && door.openDoor != null)
+        else
         {
-            TryTrackTarget(door.openDoor);
+            currentTarget = wanderTarget;
         }
 
         if (currentTarget)
@@ -54,7 +61,6 @@ public class Enemy : MonoBehaviour
         }
 
 
-
         if (canOpenDoors)
         {
             OpenNearbyDoors();
@@ -64,7 +70,8 @@ public class Enemy : MonoBehaviour
         {
             CloseNearbyDoors();
         }
-        if(papadopoulos == true)
+
+        if (papadopoulos == true)
         {
             followcamera();
         }
@@ -142,8 +149,8 @@ public class Enemy : MonoBehaviour
     {
         if (currentTarget)
         {
-           wanderTarget.position = FindAnyObjectByType<Camera>().transform.position + new Vector3(0, -10, 10);
-            Camera.main.transform.LookAt(transform);
+            wanderTarget.position = FindAnyObjectByType<Camera>().transform.position + FindAnyObjectByType<Camera>().transform.forward * 5f;
+            
         }
     }
     
