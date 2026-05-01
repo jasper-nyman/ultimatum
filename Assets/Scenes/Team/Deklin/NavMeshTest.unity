@@ -1645,23 +1645,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8766645245818495419, guid: 5f7b5398c2d5d214bb898270abb3db14, type: 3}
   m_PrefabInstance: {fileID: 5732269750936017959}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &114231961
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 114231954}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86d149e2b5382ad4b884454594897e35, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::captureplayer
-  player: {fileID: 1104821312}
-  captureDistance: 2
-  canCapturePlayer: 1
-  capturedPlayer: 0
-  jumpPlayer: 0
 --- !u!1 &114806138
 GameObject:
   m_ObjectHideFlags: 0
@@ -13337,32 +13320,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1965149466}
     - target: {fileID: 3734269857615711366, guid: 08feb77605079704facabb97b6f17521, type: 3}
-      propertyPath: canOpenDoors
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3734269857615711366, guid: 08feb77605079704facabb97b6f17521, type: 3}
       propertyPath: wanderTarget
       value: 
       objectReference: {fileID: 793506567}
-    - target: {fileID: 3734269857615711366, guid: 08feb77605079704facabb97b6f17521, type: 3}
-      propertyPath: doorMask.m_Bits
-      value: 128
-      objectReference: {fileID: 0}
-    - target: {fileID: 3734269857615711366, guid: 08feb77605079704facabb97b6f17521, type: 3}
-      propertyPath: obstacleMask.m_Bits
-      value: 64
-      objectReference: {fileID: 0}
     - target: {fileID: 7282136813496991133, guid: 08feb77605079704facabb97b6f17521, type: 3}
       propertyPath: m_Name
       value: advanced ai
-      objectReference: {fileID: 0}
-    - target: {fileID: 7282136813496991133, guid: 08feb77605079704facabb97b6f17521, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9113915535616903478, guid: 08feb77605079704facabb97b6f17521, type: 3}
-      propertyPath: m_Speed
-      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -17267,10 +17230,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 714296688642013553, guid: 5f7b5398c2d5d214bb898270abb3db14, type: 3}
-      propertyPath: m_ExcludeLayers.m_Bits
-      value: 128
-      objectReference: {fileID: 0}
     - target: {fileID: 2013595086942812759, guid: 5f7b5398c2d5d214bb898270abb3db14, type: 3}
       propertyPath: m_LocalPosition.x
       value: 35.14
@@ -17323,21 +17282,18 @@ PrefabInstance:
       propertyPath: wanderTarget
       value: 
       objectReference: {fileID: 1102782119}
-    - target: {fileID: 3419625304506405024, guid: 5f7b5398c2d5d214bb898270abb3db14, type: 3}
-      propertyPath: canCloseDoors
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8766645245818495419, guid: 5f7b5398c2d5d214bb898270abb3db14, type: 3}
       propertyPath: m_Name
       value: doormaster
       objectReference: {fileID: 0}
+    - target: {fileID: 9177302767286624183, guid: 5f7b5398c2d5d214bb898270abb3db14, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1104821312}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8766645245818495419, guid: 5f7b5398c2d5d214bb898270abb3db14, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 114231961}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5f7b5398c2d5d214bb898270abb3db14, type: 3}
 --- !u!1001 &7583683189642036979
 PrefabInstance:
