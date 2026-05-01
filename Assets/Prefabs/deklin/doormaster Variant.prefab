@@ -72,13 +72,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6018394797672429274, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+      propertyPath: m_ExcludeLayers.m_Bits
+      value: 128
+      objectReference: {fileID: 0}
     - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
       propertyPath: targetType
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
       propertyPath: canCloseDoors
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8437740449978310411, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
       propertyPath: doorMask.m_Bits
@@ -93,5 +97,30 @@ PrefabInstance:
     - {fileID: 6265238550036369766, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2577591998173982224, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9177302767286624183}
   m_SourcePrefab: {fileID: 100100000, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+--- !u!1 &8766645245818495419 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2577591998173982224, guid: 66f0d418310e64542aef45b58c08ab20, type: 3}
+  m_PrefabInstance: {fileID: 6515603803149717419}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &9177302767286624183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8766645245818495419}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86d149e2b5382ad4b884454594897e35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::captureplayer
+  player: {fileID: 0}
+  captureDistance: 2
+  canCapturePlayer: 1
+  capturedPlayer: 0
+  jumpPlayer: 0

@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
@@ -12,25 +13,41 @@ public class door : MonoBehaviour, IInteractable
         open,
         close
     }
-
+    public float timerset = 0.5f;
+    public float interacttimer = 0.5f;
+    public bool alreadyinteracted = true;
     public Animator anim;
     public doorstate state;
     public AudioClip openNoise, closeNoise;
 
 
-    
-    
+    public void Update()
+    {
+        if (interacttimer > 0)
+        {
+            interacttimer -= Time.deltaTime;
+        }
+    }
+
     public void Interact()
     {
-        if (state == doorstate.close)
+        if (alreadyinteracted==true && interacttimer <= 0)
         {
-            open();
-        }
-        else
-        {
-            close();
-        }
 
+
+            if (state == doorstate.close)
+            {
+                open();
+                alreadyinteracted = true;
+                StartCoroutine(ResetInteraction());
+            }
+            else
+            {
+                close();
+                alreadyinteracted = true;
+                StartCoroutine(ResetInteraction());
+            }
+        }
         
     }
 
@@ -48,6 +65,7 @@ public class door : MonoBehaviour, IInteractable
         Invoke(nameof(rebakeNavMesh), 1f);
 
         openDoor = transform;
+        interacttimer = timerset;
     }
 
     public void close()
@@ -56,5 +74,13 @@ public class door : MonoBehaviour, IInteractable
         state = doorstate.close;
         GetComponent<AudioSource>().PlayOneShot(closeNoise);
         Invoke(nameof(rebakeNavMesh), 1f);
+        interacttimer = timerset;
+    }
+    IEnumerator ResetInteraction()
+    {
+        
+        alreadyinteracted = false;
+        yield return new WaitForSeconds(1f);
+        alreadyinteracted = true;
     }
 }
