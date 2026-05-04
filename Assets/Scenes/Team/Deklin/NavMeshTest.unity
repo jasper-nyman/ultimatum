@@ -10264,11 +10264,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
       propertyPath: m_ActionEvents.Array.data[21].m_ActionId
-      value: 98d0f9e1-9924-471d-b1cc-897e6410e14d
+      value: 08a21e03-3a21-4876-a915-53d7455896c6
       objectReference: {fileID: 0}
     - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
       propertyPath: m_ActionEvents.Array.data[21].m_ActionName
-      value: Player/flashlight
+      value: 'Player/flashlight[/Keyboard/f]'
       objectReference: {fileID: 0}
     - target: {fileID: 817072923427752072, guid: 929bda7756477c746ac112f921999db0, type: 3}
       propertyPath: m_ActionEvents.Array.data[3].m_PersistentCalls.m_Calls.Array.size
