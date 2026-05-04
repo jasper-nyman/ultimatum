@@ -873,17 +873,15 @@ MonoBehaviour:
   attemptsPerItem: 20
   raycastUp: 5
   raycastDown: 10
-  spawnHeightOffset: 0.02
+  spawnHeightOffset: 1.55
   surfaceMask:
     serializedVersion: 2
     m_Bits: 4294967295
   player: {fileID: 1935405901}
   minDistanceFromPlayer: 5
-  maxDistanceFromPlayer: 0
-  spawnOnStart: 0
-  allowEditorSpawn: 1
+  maxDistanceFromPlayer: 5
+  spawnOnStart: 1
   spawnedLifetime: 60
-  hasSpawned: 1
 --- !u!4 &1087209205
 Transform:
   m_ObjectHideFlags: 0
@@ -893,7 +891,7 @@ Transform:
   m_GameObject: {fileID: 1087209203}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -501.4515, y: -0.53, z: 201.6314}
+  m_LocalPosition: {x: -501.4515, y: -0.44, z: 201.6314}
   m_LocalScale: {x: 1.6387, y: 1, z: 1.5801}
   m_ConstrainProportionsScale: 0
   m_Children: []
