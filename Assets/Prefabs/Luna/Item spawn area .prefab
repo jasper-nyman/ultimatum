@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6933716683739701796
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7097018020009783789}
+  - component: {fileID: 3727781673098619391}
+  m_Layer: 0
+  m_Name: 'Item spawn area '
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7097018020009783789
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6933716683739701796}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -501.4515, y: -0.53, z: 201.6314}
+  m_LocalScale: {x: 1.6387, y: 1, z: 1.5801}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3727781673098619391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6933716683739701796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0241688702007f34eadc522bdca58f1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RandomSurfaceSpawner
+  areaSize: {x: 10, y: 0, z: 10}
+  prefabs:
+  - {fileID: 0}
+  - {fileID: 0}
+  minCount: 3
+  maxCount: 8
+  attemptsPerItem: 20
+  raycastUp: 5
+  raycastDown: 10
+  spawnHeightOffset: 0.02
+  surfaceMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  player: {fileID: 0}
+  minDistanceFromPlayer: 5
+  maxDistanceFromPlayer: 0
+  spawnOnStart: 0
+  allowEditorSpawn: 1
+  spawnedLifetime: 60
+  hasSpawned: 1
