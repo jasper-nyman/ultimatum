@@ -1,11 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Attach to an empty GameObject. Configure the box `areaSize`, the player transform
-// and a list of prefabs to spawn. Press the context-menu "SpawnItemsNow" in the
-// inspector (or call SpawnOnce() at runtime) to spawn a random number of items.
-// Spawns will be placed using a downward raycast so they land on surfaces in the world.
-[ExecuteAlways]
+
 public class RandomSurfaceSpawner : MonoBehaviour
 {
     [Header("Area")]
@@ -40,14 +36,11 @@ public class RandomSurfaceSpawner : MonoBehaviour
     [Header("Behavior")]
     [Tooltip("If true, the spawner will run automatically at Start (once)")]
     public bool spawnOnStart = false;
-    [Tooltip("If true, allow spawning from the editor via the context menu (SpawnItemsNow)")]
-    public bool allowEditorSpawn = true;
 
     [Header("Spawned lifetime")]
     [Tooltip("Lifetime in seconds for each spawned object. <=0 means never auto-destroy.")]
     public float spawnedLifetime = 60f;
 
-     [SerializeField]
     private bool hasSpawned = false;
 
     // Container to parent spawned instances for cleanliness
@@ -55,7 +48,18 @@ public class RandomSurfaceSpawner : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log($"RandomSurfaceSpawner: Start called on '{name}' (spawnOnStart={spawnOnStart}, hasSpawned={hasSpawned}, isPlaying={Application.isPlaying})");
         if (spawnOnStart && !hasSpawned)
+        {
+            SpawnOnce();
+        }
+    }
+
+    private void OnEnable()
+    {
+        // If entering Play mode and spawnOnStart is requested, ensure we spawn once early.
+        Debug.Log($"RandomSurfaceSpawner: OnEnable called on '{name}' (spawnOnStart={spawnOnStart}, hasSpawned={hasSpawned}, isPlaying={Application.isPlaying})");
+        if (Application.isPlaying && spawnOnStart && !hasSpawned)
         {
             SpawnOnce();
         }
@@ -68,20 +72,10 @@ public class RandomSurfaceSpawner : MonoBehaviour
     {
         if (hasSpawned) return;
 
-        // If not configured to forcibly spawn on start, block spawning entirely
-        // when the player is outside the configured distance range from the spawner.
-        if (!spawnOnStart && player != null)
-        {
-            float d = Vector3.Distance(player.position, transform.position);
-            if (d < minDistanceFromPlayer) {
-                Debug.Log("RandomSurfaceSpawner: player too close to spawn area; aborting spawn.");
-                return;
-            }
-            if (maxDistanceFromPlayer > 0f && d > maxDistanceFromPlayer) {
-                Debug.Log("RandomSurfaceSpawner: player too far from spawn area; aborting spawn.");
-                return;
-            }
-        }
+        Debug.Log($"RandomSurfaceSpawner: Begin SpawnOnce on '{name}' (spawnOnStart={spawnOnStart}, player={(player==null?"null":player.name)})");
+
+        // We'll evaluate player-distance per candidate hit point. If spawnOnStart is true
+        // we bypass distance checks (spawn immediately regardless of player position).
 
         if (prefabs == null || prefabs.Length == 0)
         {
@@ -93,6 +87,7 @@ public class RandomSurfaceSpawner : MonoBehaviour
         if (count <= 0) return;
 
         _spawnContainer = new GameObject(name + "_Spawned");
+        // Parent to this spawner so cleanup is easy; in Edit mode we still create it but it will be destroyed on ResetSpawn
         _spawnContainer.transform.SetParent(transform, false);
 
         int spawned = 0;
@@ -112,25 +107,42 @@ public class RandomSurfaceSpawner : MonoBehaviour
 
                 Vector3 worldCandidate = transform.TransformPoint(local + new Vector3(0f, areaSize.y * 0.5f, 0f));
 
-                // enforce distance from player if provided
-                if (player != null)
+                // Debug candidate position and player distance check for troubleshooting
+                if (player != null && !spawnOnStart)
                 {
-                    float d = Vector3.Distance(player.position, worldCandidate);
-                    if (d < minDistanceFromPlayer) continue;
-                    if (maxDistanceFromPlayer > 0f && d > maxDistanceFromPlayer) continue;
+                    float debugDist = Vector3.Distance(player.position, worldCandidate);
+                    Debug.Log($"RandomSurfaceSpawner: candidate world position {worldCandidate}, distance to player {debugDist:F2}");
                 }
 
-                // Raycast down from above the candidate point
-                Vector3 rayOrigin = worldCandidate + Vector3.up * raycastUp;
-                if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, raycastUp + raycastDown, surfaceMask, QueryTriggerInteraction.Ignore))
+                // enforce distance from player if provided (skip this candidate if it's too close/far)
+                if (!spawnOnStart && player != null)
                 {
+                    float d = Vector3.Distance(player.position, worldCandidate);
+                    if (d < minDistanceFromPlayer)
+                    {
+                        // too close to player, skip this candidate
+                        Debug.Log($"RandomSurfaceSpawner: skipping candidate - too close to player (d={d:F2} < min {minDistanceFromPlayer})");
+                        continue;
+                    }
+                    if (maxDistanceFromPlayer > 0f && d > maxDistanceFromPlayer)
+                    {
+                        Debug.Log($"RandomSurfaceSpawner: skipping candidate - too far from player (d={d:F2} > max {maxDistanceFromPlayer})");
+                        continue;
+                    }
+                }
+
+                // Raycast down from above the candidate point. Use spawner's height as reference
+                // so we are sure the ray comes from well above the highest expected surface.
+                float topY = transform.position.y + (areaSize.y * 0.5f) + raycastUp + 5f;
+                Vector3 rayOrigin = new Vector3(worldCandidate.x, topY, worldCandidate.z);
+                float rayDistance = (topY - (transform.position.y - (areaSize.y * 0.5f))) + raycastDown;
+                if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, rayDistance, surfaceMask, QueryTriggerInteraction.Ignore))
+                {
+                    Debug.Log($"RandomSurfaceSpawner: candidate hit at {hit.point} (normal {hit.normal}) for prefab attempt {i}/{a} -- rayOrigin {rayOrigin}, rayDistance {rayDistance}");
                     // place object at hit point
                     var chosen = prefabs[Random.Range(0, prefabs.Length)];
                     if (chosen == null) break;
-
-                    var go = Instantiate(chosen, hit.point + hit.normal * spawnHeightOffset, Quaternion.FromToRotation(Vector3.up, hit.normal));
-                    // random yaw so objects don't all face same direction
-                    go.transform.Rotate(Vector3.up, Random.Range(0f, 360f), Space.Self);
+                    var go = Instantiate(chosen, hit.point + hit.normal * spawnHeightOffset, Quaternion.FromToRotation(Vector3.up, hit.normal) * Quaternion.Euler(-90f, Random.Range(0f, 360f), 0f));
                     go.transform.SetParent(_spawnContainer.transform, true);
 
                     // If spawned object has a Rigidbody ensure it's not kinematic so physics work
@@ -138,6 +150,27 @@ public class RandomSurfaceSpawner : MonoBehaviour
                     if (rb != null)
                     {
                         rb.isKinematic = false;
+                    }
+
+                    // Prevent spawned objects from blocking the player: ignore collisions
+                    // between the spawned instance and any colliders on the player.
+                    if (player != null)
+                    {
+                        var playerColliders = player.GetComponentsInChildren<Collider>();
+                        var spawnedColliders = go.GetComponentsInChildren<Collider>();
+                        if (playerColliders != null && spawnedColliders != null)
+                        {
+                            foreach (var pc in playerColliders)
+                            {
+                                if (pc == null) continue;
+                                foreach (var sc in spawnedColliders)
+                                {
+                                    if (sc == null) continue;
+                                    Physics.IgnoreCollision(pc, sc, true);
+                                }
+                            }
+                            Debug.Log($"RandomSurfaceSpawner: ignored collisions between spawned '{go.name}' and player '{player.name}' ({playerColliders.Length} player colliders, {spawnedColliders.Length} spawned colliders).");
+                        }
                     }
 
                     // Attach or set spawned lifetime behaviour so spawned items auto-destroy
@@ -151,6 +184,11 @@ public class RandomSurfaceSpawner : MonoBehaviour
                     spawned++;
                     placed = true;
                     break;
+                }
+                else
+                {
+                    // Raycast missed at this candidate
+                    // Debug.Log($"RandomSurfaceSpawner: raycast miss at {rayOrigin} downwards.");
                 }
             }
 
@@ -171,26 +209,20 @@ public class RandomSurfaceSpawner : MonoBehaviour
     public void ResetSpawn()
     {
         hasSpawned = false;
-        if (_spawnContainer != null)
-        {
-            #if UNITY_EDITOR
-            // DestroyImmediate in editor
-            DestroyImmediate(_spawnContainer);
-            #else
-            Destroy(_spawnContainer);
-            #endif
-            _spawnContainer = null;
-        }
     }
 
     [ContextMenu("SpawnItemsNow")]
     private void SpawnItemsNowContext()
     {
-        if (!allowEditorSpawn) return;
+        Debug.Log($"RandomSurfaceSpawner: SpawnItemsNow context invoked on '{name}'");
         SpawnOnce();
-        #if UNITY_EDITOR
-        UnityEditor.EditorUtility.SetDirty(this);
-        #endif
+    }
+
+    [ContextMenu("ForceSpawnNow")]
+    private void ForceSpawnNowContext()
+    {
+        Debug.Log($"RandomSurfaceSpawner: ForceSpawnNow context invoked on '{name}'");
+        SpawnOnce();
     }
 
     private void OnDrawGizmosSelected()
