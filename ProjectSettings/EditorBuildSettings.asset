@@ -9,6 +9,12 @@ EditorBuildSettings:
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
+    path: Assets/Scenes/Team/Jas/IntroScene.unity
+    guid: 454944e5be4f2a74db208bc3ecbf2c76
+  - enabled: 1
+    path: Assets/Scenes/Team/Jas/MainMenu.unity
+    guid: 91dc5339ae190d848a807c5ac675983a
+  - enabled: 1
     path: Assets/Scenes/Team/Carl/Scene.unity
     guid: 07fe95d6c23d0e54ca110b99df94ea79
   m_configObjects:

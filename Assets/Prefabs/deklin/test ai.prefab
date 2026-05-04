@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4085058951993416379}
   - component: {fileID: 8437740449978310411}
   m_Layer: 0
-  m_Name: test ai
+  m_Name: Test AI
   m_TagString: Doormaster
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

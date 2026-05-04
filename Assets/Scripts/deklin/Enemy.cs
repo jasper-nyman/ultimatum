@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Linq;
+using System.Threading;
 using Unity.AI.Navigation;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -19,13 +21,13 @@ public class Enemy : MonoBehaviour
 
     public float distanceToNewWanderTarget = 2f;
     public LayerMask obstacleMask;
-
+    public bool papadopoulos;
     public float doorRange = 5f;
     public LayerMask doorMask;
     public bool canOpenDoors;
     public bool canCloseDoors;
     private Transform currentTarget;
-   
+
     private void Start()
     {
         NewWanderPosition();
@@ -33,26 +35,38 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        if (targetType == TargetType.Player)
+        if (papadopoulos == false)
         {
-            TryTrackTarget(player);
+            if (targetType == TargetType.Player)
+            {
+                TryTrackTarget(player);
+            }
+            else if (targetType == TargetType.OpenDoor && door.openDoor != null)
+            {
+                TryTrackTarget(door.openDoor);
+            }
         }
-        else if (targetType == TargetType.OpenDoor && door.openDoor != null)
+        else
         {
-            TryTrackTarget(door.openDoor);
+            currentTarget = wanderTarget;
         }
 
+       if (papadopoulos == true && FindAnyObjectByType<flashlight>().enabled == true && Vector3.Dot(FindAnyObjectByType<flashlight>().transform.forward, transform.position - FindAnyObjectByType<flashlight>().transform.position) > 5)
+       {
+            NewWanderPosition();
+            wanderTarget.position = new Vector3(wanderTarget.position.x, wanderTarget.position.y, wanderTarget.position.z);
+            StartCoroutine(backtoit());
+        }
         if (currentTarget)
         {
             if (Vector3.Distance(transform.position, currentTarget.position) < distanceToNewWanderTarget)
             {
                 NewWanderPosition();
             }
-        
-        GetComponent<NavMeshAgent>().SetDestination(currentTarget.transform.position);
+
+            GetComponent<NavMeshAgent>().SetDestination(currentTarget.transform.position);
         }
 
-      
 
         if (canOpenDoors)
         {
@@ -62,6 +76,11 @@ public class Enemy : MonoBehaviour
         if (canCloseDoors)
         {
             CloseNearbyDoors();
+        }
+
+        if (papadopoulos == true)
+        {
+            followcamera();
         }
     }
 
@@ -132,4 +151,19 @@ public class Enemy : MonoBehaviour
             }
         }
     }
+
+    public void followcamera()
+    {
+        if (currentTarget)
+        {
+            wanderTarget.position = FindAnyObjectByType<Camera>().transform.position + FindAnyObjectByType<Camera>().transform.forward * 5f;
+            
+        }
+    }
+   IEnumerator backtoit()
+    {
+        yield return new WaitForSeconds(8f);
+        yield return currentTarget;
+    }
+
 }
