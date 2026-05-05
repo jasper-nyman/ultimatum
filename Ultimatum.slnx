@@ -10,7 +10,6 @@
   <Project Path="ASoliman.Utils.ClipboardPlus.csproj" />
   <Project Path="FastPlay.csproj" />
   <Project Path="FastScriptReload.Runtime.csproj" />
-  <Project Path="AssemblyDefinition.csproj" />
   <Project Path="Unity.PlayerPrefsEditor.EditorResources.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="UnityPlayModeSaverEditor.csproj" />
