@@ -3,6 +3,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
+
 
 public class objectivecontrol : MonoBehaviour, IInteractable
 {
@@ -23,6 +25,10 @@ public class objectivecontrol : MonoBehaviour, IInteractable
     // Update is called once per frame
     void Update()
     {
+        if (objectivecomplete == true)
+        {
+            SceneManager.LoadScene("Win");
+        }
         if (objectivecounter == 10)
         {
             objectivecomplete = true;
