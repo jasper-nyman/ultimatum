@@ -9,7 +9,7 @@ public class IntroContinue : MonoBehaviour
         if (Keyboard.current.anyKey.isPressed || Mouse.current.leftButton.isPressed || Mouse.current.rightButton.isPressed)
         {
             //load the next scene
-            UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Game");
         }
     }
 }
