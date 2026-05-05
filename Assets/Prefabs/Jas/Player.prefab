@@ -6308,6 +6308,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 103f4db2-5210-49b5-b93c-63b5f4c1b501
     m_ActionName: 'Player/UseItem[/Mouse/rightButton]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5956689645393657654}
+        m_TargetAssemblyTypeName: flashlight, Assembly-CSharp
+        m_MethodName: ToggleFlashlight
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 71d7513c-1630-48a2-b133-0c28f8c0bc75
+    m_ActionName: 'Player/flashlight[/Keyboard/f]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
